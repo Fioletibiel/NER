@@ -43,7 +43,7 @@ def procent(gora,dol,buff):
         print('{0}%\r'.format(percent)),
     return percent
 
-def load_xmls(rootdir, number_of_files):
+def load_xmls(nkjp_dir, number_of_files):
 
     tekst = []  # lista zdań
 
@@ -66,10 +66,10 @@ def load_xmls(rootdir, number_of_files):
     buff = 0
     ann_words_index = 0
     ann_named_index = 0
-    for subdir, dirs, files in os.walk(rootdir):
+    for subdir, dirs, files in os.walk(nkjp_dir):
         if iterate_files <= number_of_files:
             for file in files:
-                if(subdir==rootdir): break
+                if subdir == nkjp_dir: break
                 filepath = subdir + os.sep + file
 
                 # if filepath.endswith("text.xml"):
@@ -190,7 +190,7 @@ def load_xmls(rootdir, number_of_files):
 
     w_type = []
     w_subtype = []
-    for file_index in range(len(tekst)):
+    for file_index in range(len(ann_words_indexes_from)):
         w_od = ann_words_indexes_from[file_index]
         w_do = ann_words_indexes_to[file_index]
         n_od = ann_named_indexes_from[file_index]
@@ -242,6 +242,36 @@ def load_xmls(rootdir, number_of_files):
 
     return w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences
 
+# {'1)+1:w_tag': 'Fpa',
+#  '2)+1:w_tag[:2]': 'Fp',
+#  '3)+1:word.istitle()': False,
+#  '4)+1:word.isupper()': False,
+#  '5)+1:word.lower()': '(',
+#  '6)-1:w_tag': 'Fpa',
+#  '7)-1:w_tag[:2]': 'Fp',
+#  '8)-1:word.istitle()': False,
+#  '9)-1:word.isupper()': False,
+#  '10)-1:word.lower()': '(',
+#  '11)BOS': True,
+#  '12)EOS': True,
+#  '13)w_tag': 'NP',
+#  '14)w_tag[:2]': 'NP',
+#  '15)word.isdigit()': False,
+#  '16)word.istitle()': True,
+#  '17)word.isupper()': False,
+#  '18)w_base.lower()': 'melbourne',
+#  '19)w_orth.lower()': 'melbourne',
+#  '20)w_base[-2:]': 'ne',
+#  '21)w_base[-3:]': 'rne'
+#  '22)w_orth[-2:]': 'ne',
+#  '23)w_orth[-3:]': 'rne'
+#  '24)w_msd_1': cośtam
+#  '24)w_msd_2': cośtam
+#  '24)...
+#  '24)w_msd_10': cośtam
+#  '25)w_type':
+#  '26)w_subtype':}
+
 def feat1(w_tag, indeks):
     if(indeks+1<len(w_tag)): return w_tag[indeks+1]
     else: return "0"
@@ -287,10 +317,10 @@ def feat10(w_base, indeks):
         return w_base[indeks-1].lower()
     else: return False
 
-def feat11(indeks):
+def feat11(BOS, indeks):
     return BOS[indeks]
 
-def feat12(indeks):
+def feat12(EOS, indeks):
     return EOS[indeks]
 
 def feat13(w_tag, indeks):
@@ -329,64 +359,68 @@ def feat23(w_orth, indeks):
 def feat24(w_msd, indeks, zero_dziewiec):
     return w_msd[indeks][zero_dziewiec]
 
-# {'1)+1:w_tag': 'Fpa',
-#  '2)+1:w_tag[:2]': 'Fp',
-#  '3)+1:word.istitle()': False,
-#  '4)+1:word.isupper()': False,
-#  '5)+1:word.lower()': '(',
-#  '6)-1:w_tag': 'Fpa',
-#  '7)-1:w_tag[:2]': 'Fp',
-#  '8)-1:word.istitle()': False,
-#  '9)-1:word.isupper()': False,
-#  '10)-1:word.lower()': '(',
-#  '11)BOS': True,
-#  '12)EOS': True,
-#  '13)w_tag': 'NP',
-#  '14)w_tag[:2]': 'NP',
-#  '15)word.isdigit()': False,
-#  '16)word.istitle()': True,
-#  '17)word.isupper()': False,
-#  '18)w_base.lower()': 'melbourne',
-#  '19)w_orth.lower()': 'melbourne',
-#  '20)w_base[-2:]': 'ne',
-#  '21)w_base[-3:]': 'rne'
-#  '22)w_orth[-2:]': 'ne',
-#  '23)w_orth[-3:]': 'rne'
-#  '24)w_msd_1': cośtam
-#  '24)w_msd_2': cośtam
-#  '24)...
-#  '24)w_msd_10': cośtam
-#  '25) ':
-#  '26) ':
-#  '27) ':
-#  '28) ':
-#  '29) ':
-#  '30) ': }
+def feat25(w_type, indeks):
+    return w_type[indeks]
 
-def feat25():
-    return
+def feat26(w_subtype, indeks):
+    return w_subtype[indeks]
 
-w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences = load_xmls("C:\\Users\Paweł\Documents\INL_korpus", 1)
+def prepare_dictionary(nkjp_dir, path_of_input_file, number_of_files):
+    w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences = load_xmls(nkjp_dir, number_of_files)
 
-#print(tekst[:1])
-
-
-
-
-
-
-
-
-
-
+    features = []
+    for indeks in range(number_of_tokens):
+        features.append(dict())
+        features[indeks] = {
+            '1)': feat1(w_tag, indeks),
+            '2)': feat2(w_tag, indeks),
+            '3)': feat3(w_base, indeks),
+            '4)': feat4(w_base, indeks),
+            '5)': feat5(w_base, indeks),
+            '6)': feat6(w_tag, indeks),
+            '7)': feat7(w_tag, indeks),
+            '8)': feat8(w_base, indeks),
+            '9)': feat9(w_base, indeks),
+            '10)': feat10(w_base, indeks),
+            '11)': feat11(BOS, indeks),
+            '12)': feat12(EOS, indeks),
+            '13)': feat13(w_tag, indeks),
+            '14)': feat14(w_tag, indeks),
+            '15)': feat15(w_base, indeks),
+            '16)': feat16(w_base, indeks),
+            '17)': feat17(w_base, indeks),
+            '18)': feat18(w_base, indeks),
+            '19)': feat19(w_orth, indeks),
+            '20)': feat20(w_base, indeks),
+            '21)': feat21(w_base, indeks),
+            '22)': feat22(w_orth, indeks),
+            '23)': feat23(w_orth, indeks),
+            '24-0)': feat24(w_msd, indeks, 0),
+            '24-1)': feat24(w_msd, indeks, 1),
+            '24-2)': feat24(w_msd, indeks, 2),
+            '24-3)': feat24(w_msd, indeks, 3),
+            '24-4)': feat24(w_msd, indeks, 4),
+            '24-5)': feat24(w_msd, indeks, 5),
+            '24-6)': feat24(w_msd, indeks, 6),
+            '24-7)': feat24(w_msd, indeks, 7),
+            '24-8)': feat24(w_msd, indeks, 8),
+            '24-9)': feat24(w_msd, indeks, 9),
+            '25)w_type': feat25(w_type, indeks),
+            '26)w_subtype': feat26(w_subtype, indeks)}
 
 
 
+    for feature in features:
+        for key, value in feature.items():
+            print(key, value)
+        print("")
 
 
 
-
-
+nkjp_dir = "C:\\Users\Paweł\Documents\INL_korpus"
+path_of_input_file =".input_data.txt"
+number_of_files = 1
+prepare_dictionary(nkjp_dir, path_of_input_file, number_of_files)
 
 
 
