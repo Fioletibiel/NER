@@ -1,7 +1,7 @@
 import Train as load
 
 # wpisujemy:
-rootdir = "C:\\Users\Paweł\Documents\INL_korpus"
+rootdir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
 number_of_files = 100     # nie więcej niż 3889
 number_of_mixes = 5      # dowolny int
 
