@@ -57,9 +57,15 @@ def load_xmls(rootdir, number_of_files):
     n_type = []
     n_subtype = []
 
+    ann_words_indexes_from = []
+    ann_words_indexes_to = []
+    ann_named_indexes_from = []
+    ann_named_indexes_to = []
     print("wczytywanie danych...")
     iterate_files = 1
     buff = 0
+    ann_words_index = 0
+    ann_named_index = 0
     for subdir, dirs, files in os.walk(rootdir):
         if (iterate_files <= number_of_files):
             for file in files:
@@ -99,12 +105,13 @@ def load_xmls(rootdir, number_of_files):
                     items_tekst = mydoc.getElementsByTagName('ab')
                     for elem in items_tekst:
                         tekst.append(elem.firstChild.data)
+                    buff = procent(iterate_files,number_of_files,buff)
+                    iterate_files += 1
 
                 if filepath.endswith("ann_words.xml"):
                     tree = ET.parse(filepath)
                     root = tree.getroot()
-                    buff = procent(iterate_files,number_of_files,buff)
-                    iterate_files += 1
+                    ann_words_indexes_from.append(ann_words_index)
                     for e_tei in root:
                         for e_text in e_tei:
                             for e_body in e_text:
@@ -121,14 +128,20 @@ def load_xmls(rootdir, number_of_files):
                                                         w_base.append(e_f[0].text)
 
                                                     if (e_f.attrib == {'name': 'ctag'}):
-                                                        w_tag.append(e_f[0].attrib)
+                                                        for _, value in e_f[0].attrib.items():
+                                                            w_tag.append(value)
 
                                                     if (e_f.attrib == {'name': 'msd'}):
                                                         w_msd.append(e_f[0].attrib)
 
+                                                    ann_words_index += 1
+
+                    ann_words_indexes_to.append(ann_words_index)
+
                 if filepath.endswith("ann_named.xml"):
                     tree = ET.parse(filepath)
                     root = tree.getroot()
+                    ann_named_indexes_from.append(ann_named_index)
                     for e_tei in root:
                         for e_text in e_tei:
                             for e_body in e_text:
@@ -136,6 +149,7 @@ def load_xmls(rootdir, number_of_files):
                                     for e_s in e_p:
                                         for e_seg in e_s:
                                             for e_fs in e_seg:
+                                                has_subtype = False
                                                 for e_f in e_fs:
 
                                                     if (e_f.attrib == {'name': 'orth'}):
@@ -145,10 +159,20 @@ def load_xmls(rootdir, number_of_files):
                                                         n_base.append(e_f[0].text)
 
                                                     if(e_f.attrib=={'name': 'type'}):
-                                                        n_type.append(e_f[0].attrib)
+                                                        for _, value in e_f[0].attrib.items():
+                                                            n_type.append(value)
 
                                                     if(e_f.attrib=={'name': 'subtype'}):
-                                                        n_subtype.append(e_f[0].attrib)
+                                                        for _, value in e_f[0].attrib.items():
+                                                            n_subtype.append(value)
+                                                        has_subtype = True
+
+                                                    ann_named_index += 1
+
+                                                if (has_subtype != True):
+                                                    n_subtype.append("")
+
+                    ann_named_indexes_to.append(ann_named_index)
 
     # tekst_string = ""
     # for word in w_orth:
@@ -159,66 +183,36 @@ def load_xmls(rootdir, number_of_files):
     for elem in w_msd:
         for _, value in elem.items():
             w_msd_list.append(value)
-
-    for i in range(len(w_msd_list)):
-        temp = w_msd_list[i].replace(":", " ")
+    w_msd = w_msd_list
+    for i in range(len(w_msd)):
+        temp = w_msd[i].replace(":", " ")
         temp = temp.split()
-        w_msd_list[i] = temp
-
-    for i in range(len(w_msd_list)):
+        w_msd[i] = temp
+    for i in range(len(w_msd)):
         for j in range(10):
-            if(j >= len(w_msd_list[i])):
-                w_msd_list[i].append("")
+            if(j >= len(w_msd[i])):
+                w_msd[i].append("")
 
-    return tekst, w_orth, w_base, w_tag, w_msd_list, n_orth, n_base, n_type, n_subtype
+    new_n_type = []
+    for i in range(len(n_subtype)):
 
-# mam:
 
-# tekst = []    # lista zdań
-#
-# w_orth = []
-# w_base = []
-# w_tag = []
-# w_msd = []
-#
-# n_orth = []
-# n_base = []
-# n_type = []
-# n_subtype = []
+    w_type = []
+    w_subtype = []
 
-# potrzebuję:
+    # for file_index in range(len(number_of_files)):
+    #     w_od = ann_words_indexes_from[file_index]
+    #     w_do = ann_words_indexes_to[file_index]
+    #     n_od = ann_named_indexes_from[file_index]
+    #     n_do = ann_named_indexes_to[file_index]
+    #     for i in range(w_od,w_do):
+    #         for j in range(n_od,n_do):
+    #             if(w_base[i]==n_base[i] and w_orth[i]==n_orth[i] and ):
 
-# {'1)+1:w_tag': 'Fpa',
-#  '2)+1:w_tag[:2]': 'Fp',
-#  '3)+1:word.istitle()': False,
-#  '4)+1:word.isupper()': False,
-#  '5)+1:word.lower()': '(',
-#  '6)-1:w_tag': 'Fpa',
-#  '7)-1:w_tag[:2]': 'Fp',
-#  '8)-1:word.istitle()': False,
-#  '9)-1:word.isupper()': False,
-#  '10)-1:word.lower()': '(',
-#  # '11)BOS': True,
-#  # '12)EOS': True,
-#  '13)w_tag': 'NP',
-#  '14)w_tag[:2]': 'NP',
-#  '15)word.isdigit()': False,
-#  '16)word.istitle()': True,
-#  '17)word.isupper()': False,
-#  '18)w_base.lower()': 'melbourne',
-#  '19)w_orth.lower()': 'melbourne',
-#  '20)w_base[-2:]': 'ne',
-#  '21)w_base[-3:]': 'rne'
-#  '22)w_orth[-2:]': 'ne',
-#  '23)w_orth[-3:]': 'rne'
-#  '24)w_msd_1': cośtam
-#  '25)w_msd_2': cośtam
-#  '26)w_msd_10': cośtam
-#  '27) ':
-#  '28) ':
-#  '29) ':
-#  '30) ':
-#  }
+
+
+
+    return tekst, w_orth, w_base, w_tag, w_msd, n_orth, n_base, n_type, n_subtype
 
 def feat1(w_tag, indeks):
     if(indeks+1<len(w_tag)): return w_tag[indeks+1]
@@ -314,37 +308,60 @@ def feat23(w_orth, indeks):
 def feat24(w_msd, indeks, zero_dziewiec):
     return w_msd[indeks][zero_dziewiec]
 
+# {'1)+1:w_tag': 'Fpa',
+#  '2)+1:w_tag[:2]': 'Fp',
+#  '3)+1:word.istitle()': False,
+#  '4)+1:word.isupper()': False,
+#  '5)+1:word.lower()': '(',
+#  '6)-1:w_tag': 'Fpa',
+#  '7)-1:w_tag[:2]': 'Fp',
+#  '8)-1:word.istitle()': False,
+#  '9)-1:word.isupper()': False,
+#  '10)-1:word.lower()': '(',
+#  # '11)BOS': True,
+#  # '12)EOS': True,
+#  '13)w_tag': 'NP',
+#  '14)w_tag[:2]': 'NP',
+#  '15)word.isdigit()': False,
+#  '16)word.istitle()': True,
+#  '17)word.isupper()': False,
+#  '18)w_base.lower()': 'melbourne',
+#  '19)w_orth.lower()': 'melbourne',
+#  '20)w_base[-2:]': 'ne',
+#  '21)w_base[-3:]': 'rne'
+#  '22)w_orth[-2:]': 'ne',
+#  '23)w_orth[-3:]': 'rne'
+#  '24)w_msd_1': cośtam
+#  '24)w_msd_2': cośtam
+#  '24)...
+#  '24)w_msd_10': cośtam
+#  '25) ':
+#  '26) ':
+#  '27) ':
+#  '28) ':
+#  '29) ':
+#  '30) ': }
 
+def feat25():
+    return
 
+tekst, w_orth, w_base, w_tag, w_msd_list, n_orth, n_base, n_type, n_subtype = load_xmls("C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples", 3)
 
-
-
-
-
-# mając poniższe muszę teraz znaleźć indeksy w_indeks dla obiektów z n_:
-
-# tekst = []    # lista zdań
-#
-# n_orth = []
-# n_base = []
-# n_type = []
-# n_subtype = []
-
-
-
-
-
-
-
-tekst, w_orth, w_base, w_tag, w_msd, n_orth, n_base, n_type, n_subtype = load_xmls("C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples", 3)
-# for sent in tekst:
-#     print(sent)
-#     print("")
 print(tekst[:1])
-#for i in range(len(w_msd)):
-#    print(feat24(w_msd,i))
-#print(feat24(w_msd,0,0))
-#print(feat13(w_tag,1))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
