@@ -61,13 +61,13 @@ def load_xmls(rootdir, number_of_files):
     ann_words_indexes_to = []
     ann_named_indexes_from = []
     ann_named_indexes_to = []
-    # print("wczytywanie danych...")
+    print("wczytywanie danych...")
     iterate_files = 1
     buff = 0
     ann_words_index = 0
     ann_named_index = 0
     for subdir, dirs, files in os.walk(rootdir):
-        if (iterate_files <= number_of_files):
+        if iterate_files <= number_of_files:
             for file in files:
                 if(subdir==rootdir): break
                 filepath = subdir + os.sep + file
@@ -105,7 +105,7 @@ def load_xmls(rootdir, number_of_files):
                     items_tekst = mydoc.getElementsByTagName('ab')
                     for elem in items_tekst:
                         tekst.append(elem.firstChild.data)
-                    # buff = procent(iterate_files,number_of_files,buff)
+                    buff = procent(iterate_files,number_of_files,buff)
                     iterate_files += 1
 
                 if filepath.endswith("ann_words.xml"):
@@ -121,17 +121,17 @@ def load_xmls(rootdir, number_of_files):
                                             for e_fs in e_seg:
                                                 for e_f in e_fs:
 
-                                                    if (e_f.attrib == {'name': 'orth'}):
+                                                    if e_f.attrib == {'name': 'orth'}:
                                                         w_orth.append(e_f[0].text)
 
-                                                    if (e_f.attrib == {'name': 'base'}):
+                                                    if e_f.attrib == {'name': 'base'}:
                                                         w_base.append(e_f[0].text)
 
-                                                    if (e_f.attrib == {'name': 'ctag'}):
+                                                    if e_f.attrib == {'name': 'ctag'}:
                                                         for _, value in e_f[0].attrib.items():
                                                             w_tag.append(value)
 
-                                                    if (e_f.attrib == {'name': 'msd'}):
+                                                    if e_f.attrib == {'name': 'msd'}:
                                                         w_msd.append(e_f[0].attrib)
 
                                                 ann_words_index += 1
@@ -150,36 +150,38 @@ def load_xmls(rootdir, number_of_files):
                                         for e_seg in e_s:
                                             for e_fs in e_seg:
                                                 for key, _ in e_fs.attrib.items():
-                                                    if (key=="type"):
+                                                    if key == "type":
                                                         has_subtype = False
                                                         has_type = False
                                                         for e_f in e_fs:
-
-                                                            if(e_f.attrib=={'name': 'type'}):
+                                                            has_time = False
+                                                            if e_f.attrib == {'name': 'type'}:
                                                                 for _, value in e_f[0].attrib.items():
+                                                                    if value == "date" or value == "time":
+                                                                        has_time = True
+                                                                        break
                                                                     n_type.append(value)
+                                                                if has_time: break
                                                                 has_type = True
 
-                                                            if(e_f.attrib=={'name': 'subtype'}):
+                                                            if e_f.attrib == {'name': 'subtype'}:
                                                                 for _, value in e_f[0].attrib.items():
                                                                     n_subtype.append(value)
                                                                 has_subtype = True
 
-                                                            if (e_f.attrib == {'name': 'orth'}):
+                                                            if e_f.attrib == {'name': 'orth'}:
                                                                 n_orth.append(e_f[0].text)
 
-                                                            if (e_f.attrib == {'name': 'base'}):
+                                                            if e_f.attrib == {'name': 'base'}:
                                                                 n_base.append(e_f[0].text)
 
                                                         ann_named_index += 1
 
-                                                        if (has_subtype != True):
+                                                        if has_subtype != True:
                                                             n_subtype.append("")
 
-                                                        if (has_type != True):
+                                                        if has_type != True:
                                                             n_type.append("")
-
-                                                        print("")
 
                     ann_named_indexes_to.append(ann_named_index)
 
@@ -204,24 +206,40 @@ def load_xmls(rootdir, number_of_files):
 
     # for i in range(len(n_base))[:10]:
     #     print(n_base[i] + " - " + n_type[i] + " - " + n_subtype[i])
+    # for i in range(len(n_base)):
+    #     print(n_base[i] + " - " + n_orth[i])
 
-    new_n_type = []
-    for i in range(len(n_subtype)):
-
-
-    w_type = []
-    w_subtype = []
-
-    # for file_index in range(len(number_of_files)):
+    # w_type = []
+    # w_subtype = []
+    # for file_index in range(number_of_files):
     #     w_od = ann_words_indexes_from[file_index]
     #     w_do = ann_words_indexes_to[file_index]
     #     n_od = ann_named_indexes_from[file_index]
     #     n_do = ann_named_indexes_to[file_index]
-    #     for i in range(w_od,w_do):
-    #         for j in range(n_od,n_do):
-    #             if(w_base[i]==n_base[i] and w_orth[i]==n_orth[i] and ):
-
-
+    #     for w in range(w_od, w_do):
+    #         found = False
+    #         n_buff = 0
+    #         for n in range(n_od, n_do):
+    #             if w_base[w] == n_base[n] and w_orth[w] == n_orth[n] and n_subtype[n] != "":
+    #                 n_buff = n
+    #                 found = True
+    #         if found:
+    #             w_type.append(n_type[n_buff])
+    #             w_subtype.append(n_subtype[n_buff])
+    #         else:
+    #             for n in range(n_od, n_do):
+    #                 if w_base[w] == n_base[n] and w_orth[w] == n_orth[n]:
+    #                     n_buff = n
+    #                     found = True
+    #             if found:
+    #                 w_type.append(n_type[n_buff])
+    #                 w_subtype.append("")
+    #             else:
+    #                 w_type.append("")
+    #                 w_subtype.append("")
+    #
+    # for i in range(len(w_base))[:100]:
+    #     print(w_base[i] + " - " + w_type[i] + " - " + w_subtype[i])
 
 
     return tekst, w_orth, w_base, w_tag, w_msd, n_orth, n_base, n_type, n_subtype
