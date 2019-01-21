@@ -150,6 +150,7 @@ def load_xmls(rootdir, number_of_files):
                                         for e_seg in e_s:
                                             for e_fs in e_seg:
                                                 has_subtype = False
+                                                has_type = False
                                                 for e_f in e_fs:
 
                                                     if (e_f.attrib == {'name': 'orth'}):
@@ -161,6 +162,7 @@ def load_xmls(rootdir, number_of_files):
                                                     if(e_f.attrib=={'name': 'type'}):
                                                         for _, value in e_f[0].attrib.items():
                                                             n_type.append(value)
+                                                        has_type = True
 
                                                     if(e_f.attrib=={'name': 'subtype'}):
                                                         for _, value in e_f[0].attrib.items():
@@ -171,6 +173,8 @@ def load_xmls(rootdir, number_of_files):
 
                                                 if (has_subtype != True):
                                                     n_subtype.append("")
+                                                if (has_type != True):
+                                                    n_type.append("")
 
                     ann_named_indexes_to.append(ann_named_index)
 
@@ -193,8 +197,11 @@ def load_xmls(rootdir, number_of_files):
             if(j >= len(w_msd[i])):
                 w_msd[i].append("")
 
-    new_n_type = []
-    for i in range(len(n_subtype)):
+    for i in range(len(n_base)):
+        print(n_base[i] + " - " + n_type[i] + " - " + n_subtype[i])
+
+    # new_n_type = []
+    # for i in range(len(n_subtype)):
 
 
     w_type = []
@@ -347,7 +354,7 @@ def feat25():
 
 tekst, w_orth, w_base, w_tag, w_msd_list, n_orth, n_base, n_type, n_subtype = load_xmls("C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples", 3)
 
-print(tekst[:1])
+#print(tekst[:1])
 
 
 
