@@ -1,39 +1,6 @@
 import os
-# from xml.dom import minidom
 import xml.etree.ElementTree as ET
 import json
-
-# def remove_duplicates_1(list):
-#     list2 = []
-#     for i in range(len(list)):
-#         powtarzasie = False
-#         for j in range(i):
-#             if(list[i]==list[j]):
-#                 powtarzasie = True
-#         if(powtarzasie==False):
-#             list2.append(list[i])
-#         # procent = int((i / len(list)) * 100)
-#         # if (procent % 10 == 0 and procent != 0):
-#         #     print(str(50 + procent/2) + "%")
-#         print(str(50+((i/len(list))*100))+"%")
-#     return list2
-#
-# def remove_duplicates_2(list1, list2):
-#     list3 = []
-#     list4 = []
-#     for i in range(len(list1)):
-#         powtarzasie = False
-#         for j in range(i):
-#             if(list1[i]==list1[j]):
-#                 powtarzasie = True
-#         if(powtarzasie==False):
-#             list3.append(list1[i])
-#             list4.append(list2[i])
-#         # procent = int((i / len(list1)) * 100)
-#         # if (procent % 10 == 0 and procent != 0):
-#         #     print(str(procent/2) + "%")
-#         print(str((i/len(list1))*50)+"%")
-#     return list3, list4
 
 def procent(gora,dol,buff):
     global buff_percent
@@ -54,8 +21,6 @@ def print_procent(i, length, indeks):
     # print("trwa przetwarzanie... " + str(procent) + "%", end = '\r')
 
 def load_xmls(nkjp_dir, number_of_files):
-
-    # tekst = []  # lista zdań
 
     w_orth = []
     w_base = []
@@ -81,12 +46,6 @@ def load_xmls(nkjp_dir, number_of_files):
             for file in files:
                 if subdir == nkjp_dir: break
                 filepath = subdir + os.sep + file
-
-                # if filepath.endswith("text.xml"):
-                #     mydoc = minidom.parse(filepath)
-                #     items_tekst = mydoc.getElementsByTagName('ab')
-                #     for elem in items_tekst:
-                #         tekst.append(elem.firstChild.data)
 
                 if filepath.endswith("ann_words.xml"):
                     buff = procent(iterate_files,number_of_files,buff)
@@ -176,10 +135,6 @@ def load_xmls(nkjp_dir, number_of_files):
                                         ann_named_indexes_to.append(ann_named_index)
                     # ann_named_indexes_to.append(ann_named_index)
 
-    # tekst_string = ""
-    # for word in w_orth:
-    #     tekst_string += word + " "
-    # #print(tekst_string)
     print("dane zostały wczytane")
     print("ropoczęto przetwarzanie wstępne")
 
@@ -261,24 +216,24 @@ def load_xmls(nkjp_dir, number_of_files):
 
 # {'1)+1:w_tag': 'Fpa',
 #  '2)+1:w_tag[:2]': 'Fp',
-#  '3)+1:word.istitle()': False,
-#  '4)+1:word.isupper()': False,
-#  '5)+1:word.lower()': '(',
+#  '3)+1:w_base.istitle()': False,
+#  '4)+1:w_base.isupper()': False,
+#  '5)+1:w_base.lower()': '(',
 #  '6)-1:w_tag': 'Fpa',
 #  '7)-1:w_tag[:2]': 'Fp',
-#  '8)-1:word.istitle()': False,
-#  '9)-1:word.isupper()': False,
-#  '10)-1:word.lower()': '(',
+#  '8)-1:w_base.istitle()': False,
+#  '9)-1:w_base.isupper()': False,
+#  '10)-1:w_base.lower()': '(',
 #  '11)BOS': True,
 #  '12)EOS': True,
 #  '13)w_tag': 'NP',
 #  '14)w_tag[:2]': 'NP',
-#  '15)word.isdigit()': False,
-#  '16)word.istitle()': True,
-#  '17)word.isupper()': False,
+#  '15)w_base.isdigit()': False,
+#  '16)w_base.istitle()': True,
+#  '17)w_base.isupper()': False,
 #  '18)w_base.lower()': 'melbourne',
 #  '19)w_orth.lower()': 'melbourne',
-#  '20)w_base[-2:]': 'ne',
+#  '20)w_base[-2:]': 'ne', # można spróbować polepszyć jakość uczenia dodając ficzery 20-23 także dla tokenów o indeksie +-1
 #  '21)w_base[-3:]': 'rne'
 #  '22)w_orth[-2:]': 'ne',
 #  '23)w_orth[-3:]': 'rne'
@@ -288,9 +243,6 @@ def load_xmls(nkjp_dir, number_of_files):
 #  '24)w_msd_10': cośtam
 #  '25)w_type':
 #  '26)w_subtype':}
-
-# okazało się, że gdy token jest interpunkcją, to podpunkt 19 może wyglądać tak: "\"" przez co kompilator traktuje to jak "\ i "", gdzie drugie jako pustą wartość, trzeba to naprawić
-# trzeba zrobić dodatkowe warunki, że gdy token jest interpunkcją, to pewne ficzery będą przyjmować wartość "O", z uwzględnieniem sąsiednich tokenów
 
 def feat1(w_tag, indeks):
     print_procent(1,len(w_tag),indeks)
@@ -306,18 +258,20 @@ def feat3(w_base, indeks):
     print_procent(3, len(w_base),indeks)
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].istitle()
-    else: return False
+    else: return "O"
 
 def feat4(w_base, indeks):
     print_procent(4, len(w_base),indeks)
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].isupper()
-    else: return False
+    else: return "O"
 
-def feat5(w_base, indeks):
+def feat5(w_base, w_tag, indeks):
     print_procent(5, len(w_base),indeks)
     if(indeks+1<len(w_base)):
-        return w_base[indeks+1].lower()
+        if w_tag[indeks + 1] == "Interp": return "O"
+        else: return w_base[indeks+1].lower()
+    else: return "O"
 
 def feat6(w_tag, indeks):
     print_procent(6, len(w_tag),indeks)
@@ -333,19 +287,20 @@ def feat8(w_base, indeks):
     print_procent(8, len(w_base),indeks)
     if(indeks-1>= 0):
         return w_base[indeks-1].istitle()
-    else: return False
+    else: return "O"
 
 def feat9(w_base, indeks):
     print_procent(9, len(w_base),indeks)
     if(indeks-1>= 0):
         return w_base[indeks-1].isupper()
-    else: return False
+    else: return "O"
 
-def feat10(w_base, indeks):
+def feat10(w_base, w_tag, indeks):
     print_procent(10, len(w_base),indeks)
     if(indeks-1>= 0):
-        return w_base[indeks-1].lower()
-    else: return False
+        if w_tag[indeks - 1] == "Interp": return "O"
+        else: return w_base[indeks-1].lower()
+    else: return "O"
 
 def feat11(BOS, indeks):
     print_procent(11, len(BOS),indeks)
@@ -375,28 +330,34 @@ def feat17(w_base, indeks):
     print_procent(17, len(w_base),indeks)
     return w_base[indeks].isupper()
 
-def feat18(w_base, indeks):
-    print_procent(18, len(w_base),indeks)
-    return w_base[indeks].lower()
+def feat18(w_base, w_tag, indeks):
+    print_procent(18, len(w_base), indeks)
+    if w_tag[indeks] == "Interp": return w_base[indeks]
+    else: return w_base[indeks].lower()
 
-def feat19(w_orth, indeks):
+def feat19(w_orth, w_base, w_tag, indeks):
     print_procent(19, len(w_orth),indeks)
+    if w_tag[indeks] == "Interp": return w_base[indeks]
     return w_orth[indeks].lower()
 
-def feat20(w_base, indeks):
+def feat20(w_base, w_tag, indeks):
     print_procent(20, len(w_base),indeks)
+    if w_tag[indeks] == "Interp": return w_base[indeks]
     return w_base[indeks][-2:]
 
-def feat21(w_base, indeks):
+def feat21(w_base, w_tag, indeks):
     print_procent(21, len(w_base),indeks)
+    if w_tag[indeks] == "Interp": return w_base[indeks]
     return w_base[indeks][-3:]
 
-def feat22(w_orth, indeks):
+def feat22(w_orth, w_base, w_tag, indeks):
     print_procent(22, len(w_orth),indeks)
+    if w_tag[indeks] == "Interp": return w_base[indeks]
     return w_orth[indeks][-2:]
 
-def feat23(w_orth, indeks):
+def feat23(w_orth, w_base, w_tag, indeks):
     print_procent(23, len(w_orth),indeks)
+    if w_tag[indeks] == "Interp": return w_base[indeks]
     return w_orth[indeks][-3:]
 
 def feat24(w_msd, indeks, zero_dziewiec):
@@ -425,47 +386,6 @@ def prepare_dictionary(nkjp_dir, number_of_files):
     w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences, od, do = load_xmls(nkjp_dir, number_of_files)
 
     print("inicjowanie przetwarzania danych...")
-    # features = []
-    # for indeks in range(number_of_tokens):
-    #     features.append(dict())
-    #     features[indeks] = {
-    #         '1)': feat1(w_tag, indeks),
-    #         '2)': feat2(w_tag, indeks),
-    #         '3)': feat3(w_base, indeks),
-    #         '4)': feat4(w_base, indeks),
-    #         '5)': feat5(w_base, indeks),
-    #         '6)': feat6(w_tag, indeks),
-    #         '7)': feat7(w_tag, indeks),
-    #         '8)': feat8(w_base, indeks),
-    #         '9)': feat9(w_base, indeks),
-    #         '10)': feat10(w_base, indeks),
-    #         '11)': feat11(BOS, indeks),
-    #         '12)': feat12(EOS, indeks),
-    #         '13)': feat13(w_tag, indeks),
-    #         '14)': feat14(w_tag, indeks),
-    #         '15)': feat15(w_base, indeks),
-    #         '16)': feat16(w_base, indeks),
-    #         '17)': feat17(w_base, indeks),
-    #         '18)': feat18(w_base, indeks),
-    #         '19)': feat19(w_orth, indeks),
-    #         '20)': feat20(w_base, indeks),
-    #         '21)': feat21(w_base, indeks),
-    #         '22)': feat22(w_orth, indeks),
-    #         '23)': feat23(w_orth, indeks),
-    #         '24-0)': feat24(w_msd, indeks, 0),
-    #         '24-1)': feat24(w_msd, indeks, 1),
-    #         '24-2)': feat24(w_msd, indeks, 2),
-    #         '24-3)': feat24(w_msd, indeks, 3),
-    #         '24-4)': feat24(w_msd, indeks, 4),
-    #         '24-5)': feat24(w_msd, indeks, 5),
-    #         '24-6)': feat24(w_msd, indeks, 6),
-    #         '24-7)': feat24(w_msd, indeks, 7),
-    #         '24-8)': feat24(w_msd, indeks, 8),
-    #         '24-9)': feat24(w_msd, indeks, 9),
-    #         '25)': feat25(w_type, indeks),
-    #         '26)': feat26(w_subtype, indeks)}
-    #
-
     features = []
     for sent_i in range(number_of_sentences):
         features.append(list())
@@ -476,12 +396,12 @@ def prepare_dictionary(nkjp_dir, number_of_files):
                 '2)': feat2(w_tag, indeks),
                 '3)': feat3(w_base, indeks),
                 '4)': feat4(w_base, indeks),
-                '5)': feat5(w_base, indeks),
+                '5)': feat5(w_base, w_tag, indeks),
                 '6)': feat6(w_tag, indeks),
                 '7)': feat7(w_tag, indeks),
                 '8)': feat8(w_base, indeks),
                 '9)': feat9(w_base, indeks),
-                '10)': feat10(w_base, indeks),
+                '10)': feat10(w_base, w_tag, indeks),
                 '11)': feat11(BOS, indeks),
                 '12)': feat12(EOS, indeks),
                 '13)': feat13(w_tag, indeks),
@@ -489,12 +409,12 @@ def prepare_dictionary(nkjp_dir, number_of_files):
                 '15)': feat15(w_base, indeks),
                 '16)': feat16(w_base, indeks),
                 '17)': feat17(w_base, indeks),
-                '18)': feat18(w_base, indeks),
-                '19)': feat19(w_orth, indeks),
-                '20)': feat20(w_base, indeks),
-                '21)': feat21(w_base, indeks),
-                '22)': feat22(w_orth, indeks),
-                '23)': feat23(w_orth, indeks),
+                '18)': feat18(w_base, w_tag, indeks),
+                '19)': feat19(w_orth, w_base, w_tag, indeks),
+                '20)': feat20(w_base, w_tag, indeks),
+                '21)': feat21(w_base, w_tag, indeks),
+                '22)': feat22(w_orth, w_base, w_tag, indeks),
+                '23)': feat23(w_orth, w_base, w_tag, indeks),
                 '24-0)': feat24(w_msd, indeks, 0),
                 '24-1)': feat24(w_msd, indeks, 1),
                 '24-2)': feat24(w_msd, indeks, 2),
@@ -508,7 +428,6 @@ def prepare_dictionary(nkjp_dir, number_of_files):
                 # '25)': feat25(w_type, indeks),
                 # '26)': feat26(w_subtype, indeks)
             }
-
     predictions = []
     for sent_i in range(number_of_sentences):
         predictions.append(list())
@@ -522,9 +441,8 @@ def prepare_dictionary(nkjp_dir, number_of_files):
             # predictions[sent_i][indeks - od[sent_i]] = {
             #     'Type': feat25(w_type, indeks),
             #     'Subtype': feat26(w_subtype, indeks)}
-
-
     print("przetwarzanie danych zostało zakończone")
+
     # for feature in features:
     #     for key, value in feature.items():
     #         print(key, value)

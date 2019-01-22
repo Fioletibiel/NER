@@ -43,11 +43,11 @@ crf = sklearn_crfsuite.CRF(
 )
 crf.fit(daneU, nerU)
 
-
-
-labels = list(crf.classes_)
-labels.remove("")
-print(labels)
+#
+#
+# labels = list(crf.classes_)
+# labels.remove("")
+# print(labels)
 
 
 print("")
