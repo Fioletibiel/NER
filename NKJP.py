@@ -457,8 +457,8 @@ def prepare_dictionary(nkjp_dir, number_of_files):
             '24-7)': feat24(w_msd, indeks, 7),
             '24-8)': feat24(w_msd, indeks, 8),
             '24-9)': feat24(w_msd, indeks, 9),
-            '25)w_type': feat25(w_type, indeks),
-            '26)w_subtype': feat26(w_subtype, indeks)}
+            '25)': feat25(w_type, indeks),
+            '26)': feat26(w_subtype, indeks)}
     print("przetwarzanie danych zostało zakończone")
     # for feature in features:
     #     for key, value in feature.items():
@@ -466,7 +466,7 @@ def prepare_dictionary(nkjp_dir, number_of_files):
     #     print("")
     print("eksportowanie danych do pliku...")
     filepath = "./venv/Input_file/"
-    filename = "input_data" + ".jar"
+    filename = "input_data" + ".json"
     with open(os.path.join(filepath, filename), 'w') as temp_file:
         json.dump(features, temp_file)
     print("dane zostały eksportowane do pliku")
