@@ -14,27 +14,31 @@ def load_data():
     #     print("")
     return data
 
+# data = load_data()
 #
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.11, random_state=mikser_danych)
+#
+
+
+
+
+
+
+
 # def train(dane, ner, mikser_danych):
 #     daneU, daneR, nerU, nerR = train_test_split(dane, ner, test_size=0.11, random_state=mikser_danych)      # daneU i nerU to dane uczące, zaś daneR i nerR to dane rozwojowe
 #
 #     polish_corpus = ""
 #     for i in range(len(daneU)):
 #         polish_corpus += (str(daneU[i]) + " " + str(nerU[i]) + "\n")
-#
 #     filepath = "./stanford-ner-2018-10-16/train/"
 #     filename = "polish-corpus" + ".tsv"
 #     with open(os.path.join(filepath, filename), 'w') as temp_file:
 #         temp_file.write(polish_corpus)
 #
-#     java_path = "C:/Program Files/Java/jdk1.8.0_202/bin/"
-#     os.environ['JAVA_HOME'] = java_path
-#     classpath_path = "D:/Programy/JetBrains/PyCharm/PycharmProjects/NER/stanford-ner-2018-10-16/*"
-#     os.environ['CLASSPATH'] = classpath_path
-#     stanfordmodels_path = "D:/Programy/JetBrains/PyCharm/PycharmProjects/NER/stanford-ner-2018-10-16/classifiers"
-#     os.environ['STANFORD_MODELS'] = stanfordmodels_path
 #
 #     subprocess.call("java -mx1000m -cp stanford-ner.jar;lib/* edu.stanford.nlp.ie.crf.CRFClassifier -prop train/prop.prop", cwd = "D:/Programy/JetBrains/PyCharm/PycharmProjects/NER/stanford-ner-2018-10-16/")
+#
 #
 #     jar = "./stanford-ner-2018-10-16/stanford-ner.jar"
 #     model = "./stanford-ner-2018-10-16/classifiers/ner_model-polish.ser.gz"
@@ -45,6 +49,7 @@ def load_data():
 #     stanford_przypisanie = list(map(list, zip(*stanford_przypisanie)))
 #     # stanford_dane = stanford_przypisanie[0]   # stanford_dane są takie same jak daneR
 #     stanford_ner = stanford_przypisanie[1]
+#
 #
 #     # teraz trzeba obliczyć ilosc dobrze dopasowanych entities w stanford_ner w stosunku do nerR
 #     licz = 0
@@ -191,7 +196,7 @@ def load_data():
 #     for i in range(len(daneT)):
 #         if(nerT[i]!='O' and stanford_ner[i]!='O'):
 #             print(str(daneT[i]) + " - " + str(nerT[i]) + " - " + str(stanford_ner[i]) + "\n")
-
-
-
+#
+#
+#
 
