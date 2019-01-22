@@ -1,4 +1,3 @@
-import NKJP as nkjp
 from sklearn.model_selection import train_test_split
 from nltk.tag.stanford import StanfordNERTagger
 import os
@@ -113,7 +112,7 @@ def trening(dane, ner, mikser_danych, number_of_mixes):
 
 def source(rootdir, number_of_files, number_of_mixes):
 
-    dane, ner, daneT, nerT = nkjp.preprocess(rootdir, number_of_files)     # daneT i nerT to dane testowe
+    dane, ner, daneT, nerT = load_data()     # daneT i nerT to dane testowe
     # print("\n\n\n")
     # for i in range(len(daneT)):
     #     print(str(daneT[i])+" - "+str(nerT[i]))

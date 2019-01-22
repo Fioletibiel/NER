@@ -1,8 +1,11 @@
+import NKJP as nkjp
 import Train as load
 
-# wpisujemy:
-rootdir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
-number_of_files = 100     # nie więcej niż 3889
-number_of_mixes = 5      # dowolny int
+wczytywanie_danych = True
+if wczytywanie_danych:
+    nkjp_dir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
+    path_of_input_file ="./Input_file/"
+    number_of_files = 10 # nie więcej niż 3889
+    nkjp.prepare_dictionary(nkjp_dir, number_of_files)
 
-load.source(rootdir, number_of_files, number_of_mixes)
+

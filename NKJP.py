@@ -44,9 +44,18 @@ def procent(gora,dol,buff):
         print('{0}%\r'.format(percent)),
     return percent
 
+def print_procent(i, length, indeks):
+    procent = (indeks+1)*35 + (i+1)
+    procent = int(procent * 100 / (length*35))
+    # print('trwa przetwarzanie... {0}%\r'.format(procent))
+    print("trwa przetwarzanie... " + str(procent) + "%")
+    # sent = 'trwa przetwarzanie... {0}%\r'.format(procent)
+    # print(sent, end='', flush=True)
+    # print("trwa przetwarzanie... " + str(procent) + "%", end = '\r')
+
 def load_xmls(nkjp_dir, number_of_files):
 
-    tekst = []  # lista zdań
+    # tekst = []  # lista zdań
 
     w_orth = []
     w_base = []
@@ -171,6 +180,8 @@ def load_xmls(nkjp_dir, number_of_files):
     # for word in w_orth:
     #     tekst_string += word + " "
     # #print(tekst_string)
+    print("dane zostały wczytane")
+    print("ropoczęto przetwarzanie wstępne")
 
     w_msd_list = []
     for elem in w_msd:
@@ -230,18 +241,22 @@ def load_xmls(nkjp_dir, number_of_files):
     BOS = []
     EOS = []
     for i in range(number_of_tokens):
+        buff = procent(i, number_of_tokens, buff)
         for j in range(number_of_sentences):
             if i == ann_words_indexes_from[j]:
                 BOS.append(True)
                 EOS.append(False)
+                break
             elif i == ann_named_indexes_to[j]-1:
                 BOS.append(False)
                 EOS.append(True)
+                break
             else:
                 BOS.append(False)
                 EOS.append(False)
+                break
 
-    print("dane zostały wczytane")
+    print("zakończono przetwarzanie wstępne")
     return w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences
 
 # {'1)+1:w_tag': 'Fpa',
@@ -275,131 +290,131 @@ def load_xmls(nkjp_dir, number_of_files):
 #  '26)w_subtype':}
 
 def feat1(w_tag, indeks):
-    print("trwa przetwarzanie... 2%")
+    print_procent(1,len(w_tag),indeks)
     if(indeks+1<len(w_tag)): return w_tag[indeks+1]
     else: return "0"
 
 def feat2(w_tag, indeks):
-    print("trwa przetwarzanie... 5%")
+    print_procent(2, len(w_tag),indeks)
     if(indeks+1<len(w_tag)): return w_tag[indeks+1][0:2]
     else: return "0"
 
 def feat3(w_base, indeks):
-    print("trwa przetwarzanie... 8%")
+    print_procent(3, len(w_base),indeks)
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].istitle()
     else: return False
 
 def feat4(w_base, indeks):
-    print("trwa przetwarzanie... 11%")
+    print_procent(4, len(w_base),indeks)
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].isupper()
     else: return False
 
 def feat5(w_base, indeks):
-    print("trwa przetwarzanie... 14%")
+    print_procent(5, len(w_base),indeks)
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].lower()
 
 def feat6(w_tag, indeks):
-    print("trwa przetwarzanie... 17%")
+    print_procent(6, len(w_tag),indeks)
     if(indeks-1>=0): return w_tag[indeks-1]
     else: return "0"
 
 def feat7(w_tag, indeks):
-    print("trwa przetwarzanie... 20%")
+    print_procent(7, len(w_tag),indeks)
     if(indeks-1>=0): return w_tag[indeks-1][0:2]
     else: return "0"
 
 def feat8(w_base, indeks):
-    print("trwa przetwarzanie... 22%")
+    print_procent(8, len(w_base),indeks)
     if(indeks-1>= 0):
         return w_base[indeks-1].istitle()
     else: return False
 
 def feat9(w_base, indeks):
-    print("trwa przetwarzanie... 25%")
+    print_procent(9, len(w_base),indeks)
     if(indeks-1>= 0):
         return w_base[indeks-1].isupper()
     else: return False
 
 def feat10(w_base, indeks):
-    print("trwa przetwarzanie... 28%")
+    print_procent(10, len(w_base),indeks)
     if(indeks-1>= 0):
         return w_base[indeks-1].lower()
     else: return False
 
 def feat11(BOS, indeks):
-    print("trwa przetwarzanie... 31%")
+    print_procent(11, len(BOS),indeks)
     return BOS[indeks]
 
 def feat12(EOS, indeks):
-    print("trwa przetwarzanie... 34%")
+    print_procent(12, len(EOS),indeks)
     return EOS[indeks]
 
 def feat13(w_tag, indeks):
-    print("trwa przetwarzanie... 37%")
+    print_procent(13, len(w_tag),indeks)
     return w_tag[indeks]
 
 def feat14(w_tag, indeks):
-    print("trwa przetwarzanie... 40%")
+    print_procent(14, len(w_tag),indeks)
     return w_tag[indeks][0:2]
 
 def feat15(w_base, indeks):
-    print("trwa przetwarzanie... 42%")
+    print_procent(15, len(w_base),indeks)
     return w_base[indeks].isdigit()
 
 def feat16(w_base, indeks):
-    print("trwa przetwarzanie... 45%")
+    print_procent(16, len(w_base),indeks)
     return w_base[indeks].istitle()
 
 def feat17(w_base, indeks):
-    print("trwa przetwarzanie... 48%")
+    print_procent(17, len(w_base),indeks)
     return w_base[indeks].isupper()
 
 def feat18(w_base, indeks):
-    print("trwa przetwarzanie... 51%")
+    print_procent(18, len(w_base),indeks)
     return w_base[indeks].lower()
 
 def feat19(w_orth, indeks):
-    print("trwa przetwarzanie... 54%")
+    print_procent(19, len(w_orth),indeks)
     return w_orth[indeks].lower()
 
 def feat20(w_base, indeks):
-    print("trwa przetwarzanie... 57%")
+    print_procent(20, len(w_base),indeks)
     return w_base[indeks][-2:]
 
 def feat21(w_base, indeks):
-    print("trwa przetwarzanie... 60%")
+    print_procent(21, len(w_base),indeks)
     return w_base[indeks][-3:]
 
 def feat22(w_orth, indeks):
-    print("trwa przetwarzanie... 62%")
+    print_procent(22, len(w_orth),indeks)
     return w_orth[indeks][-2:]
 
 def feat23(w_orth, indeks):
-    print("trwa przetwarzanie... 65%")
+    print_procent(23, len(w_orth),indeks)
     return w_orth[indeks][-3:]
 
 def feat24(w_msd, indeks, zero_dziewiec):
-    if zero_dziewiec == 0: print("trwa przetwarzanie... 68%")
-    if zero_dziewiec == 1: print("trwa przetwarzanie... 71%")
-    if zero_dziewiec == 2: print("trwa przetwarzanie... 74%")
-    if zero_dziewiec == 3: print("trwa przetwarzanie... 77%")
-    if zero_dziewiec == 4: print("trwa przetwarzanie... 80%")
-    if zero_dziewiec == 5: print("trwa przetwarzanie... 82%")
-    if zero_dziewiec == 6: print("trwa przetwarzanie... 85%")
-    if zero_dziewiec == 7: print("trwa przetwarzanie... 88%")
-    if zero_dziewiec == 8: print("trwa przetwarzanie... 91%")
-    if zero_dziewiec == 9: print("trwa przetwarzanie... 94%")
+    if zero_dziewiec == 0: print_procent(24, len(w_msd),indeks)
+    if zero_dziewiec == 1: print_procent(25, len(w_msd),indeks)
+    if zero_dziewiec == 2: print_procent(26, len(w_msd),indeks)
+    if zero_dziewiec == 3: print_procent(27, len(w_msd),indeks)
+    if zero_dziewiec == 4: print_procent(28, len(w_msd),indeks)
+    if zero_dziewiec == 5: print_procent(29, len(w_msd),indeks)
+    if zero_dziewiec == 6: print_procent(30, len(w_msd),indeks)
+    if zero_dziewiec == 7: print_procent(31, len(w_msd),indeks)
+    if zero_dziewiec == 8: print_procent(32, len(w_msd),indeks)
+    if zero_dziewiec == 9: print_procent(33, len(w_msd),indeks)
     return w_msd[indeks][zero_dziewiec]
 
 def feat25(w_type, indeks):
-    print("trwa przetwarzanie... 97%")
+    print_procent(34, len(w_type),indeks)
     return w_type[indeks]
 
 def feat26(w_subtype, indeks):
-    print("trwa przetwarzanie... 100%")
+    print_procent(35, len(w_subtype),indeks)
     return w_subtype[indeks]
 
 def prepare_dictionary(nkjp_dir, number_of_files):
@@ -458,9 +473,7 @@ def prepare_dictionary(nkjp_dir, number_of_files):
 
 
 
-
 # nkjp_dir = "C:\\Users\Paweł\Documents\INL_korpus"
-nkjp_dir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
-path_of_input_file ="./Input_file/"
-number_of_files = 1
-prepare_dictionary(nkjp_dir, number_of_files)
+# nkjp_dir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
+# number_of_files = 1 # nie więcej niż 3889
+# prepare_dictionary(nkjp_dir, number_of_files)
