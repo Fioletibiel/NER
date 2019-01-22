@@ -27,7 +27,6 @@ def load_data():
 
     return daneU, nerU, daneR, nerR, daneT, nerT
 
-buff = 0
 def procent(gora,dol,buff):
     global buff_percent
     percent = int((gora / dol) * 100)
@@ -64,7 +63,7 @@ def train(daneU, nerU, daneR, nerR, algorytm):
 
     crf.fit(daneU, nerU)
     labels = list(crf.classes_)
-    labels = labels.remove("O")
+    labels.remove("O")
     # print(labels)
     y_pred = crf.predict(daneR)
     f1 = metrics.flat_f1_score(nerR, y_pred, average='weighted', labels=labels)
@@ -74,15 +73,17 @@ def train(daneU, nerU, daneR, nerR, algorytm):
     # print(metrics.flat_classification_report(nerR, y_pred, labels=sorted_labels, digits=3))
     return f1, precision, recall, labels, y_pred
 
-def f1_max(daneU, nerU, daneR, nerR, algorytmy):
+def f1_max(daneU, nerU, daneR, nerR, algorytm):
+
     f1_list = list()
-    for algorytm in algorytmy:
-        f1, _, _, _, _ = train(daneU, nerU, daneR, nerR, algorytm)
-        buff = procent(algorytm, algorytmy, buff)
+    buff = 0
+    for indeks in range(len(algorytm)):
+        f1, _, _, _, _ = train(daneU, nerU, daneR, nerR, algorytm[indeks])
+        buff = procent(indeks+1, len(algorytm), buff)
         f1_list.append(f1)
     max_f1_value = max(f1_list)
     max_f1_index = f1_list.index(max_f1_value)
-    for indeks in algorytmy:
+    for indeks in algorytm:
         if indeks == max_f1_index:
-            print(str(algorytmy[indeks] + ", f1: " + str(max_f1_value)))
+            print(str(algorytm[indeks] + ", f1: " + str(max_f1_value)))
     return max_f1_index

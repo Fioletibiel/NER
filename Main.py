@@ -14,12 +14,13 @@ if not wczytywanie_danych:
     indeks_najlepszego_algorytmu = train.f1_max(daneU, nerU, daneR, nerR, algorytmy)
 
     f1, precision, recall, labels, y_pred = train.train(daneU, nerU, daneT, nerT, algorytmy[indeks_najlepszego_algorytmu])
-    print(labels)
-    print("Miara F1: " + str(f1) + "\nPrecyzja: " + str(precision) + "\nPełność: " + str(recall))
+    print("\nEntities:", end="")
+    for elem in labels: print(elem, end=", ")
+    print("\nMiara F1: " + str(round(f1, 2)) + "\nPrecyzja: " + str(round(precision, 2)) + "\nPełność: " + str(round(recall, 2)) + "\n")
     sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
     print(train.metrics.flat_classification_report(nerT, y_pred, labels=sorted_labels, digits=3))
 
-    # print("\nteraz dane zostaną wyświetlone wg klucza: token - nkjp - sklearn\n")
-    # for i in range(len(daneT)):
-    #     if(nerT[i]!='O' and stanford_ner[i]!='O'):
-    #         print(str(daneT[i]) + " - " + str(nerT[i]) + " - " + str(stanford_ner[i]) + "\n")
+# print("\nteraz dane zostaną wyświetlone wg klucza: token - nkjp - sklearn\n")
+# for i in range(len(daneT)):
+#     if(nerT[i]!='O' and stanford_ner[i]!='O'):
+#         print(str(daneT[i]) + " - " + str(nerT[i]) + " - " + str(stanford_ner[i]) + "\n")
