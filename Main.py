@@ -20,7 +20,20 @@ if not wczytywanie_danych:
     sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
     print(train.metrics.flat_classification_report(nerT, y_pred, labels=sorted_labels, digits=3))
 
-# print("\nteraz dane zostaną wyświetlone wg klucza: token - nkjp - sklearn\n")
-# for i in range(len(daneT)):
-#     if(nerT[i]!='O' and stanford_ner[i]!='O'):
-#         print(str(daneT[i]) + " - " + str(nerT[i]) + " - " + str(stanford_ner[i]) + "\n")
+    print("\nTeraz dane zostaną wyświetlone wg klucza: token - nkjp - sklearn\n")
+    tokens = []
+    for sent in daneT:
+        for token in sent:
+            for key, value in token.items():
+                if key == "27)": tokens.append(value)
+    nkjp_korpus = []
+    for sent in nerT:
+        for token in sent:
+            nkjp_korpus.append(token)
+    eskalern = []
+    for sent in y_pred:
+        for token in sent:
+                eskalern.append(token)
+    for i in range(len(tokens)):
+        if eskalern[i] != 'O':
+            print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]) + "\n")

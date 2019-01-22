@@ -243,7 +243,8 @@ def load_xmls(nkjp_dir, number_of_files):
 #  '24)...
 #  '24)w_msd_10': cośtam
 #  '25)w_type':
-#  '26)w_subtype':}
+#  '26)w_subtype':
+#  '27)w_base': }
 
 def feat1(w_tag, indeks):
     print_procent(1,len(w_tag),indeks)
@@ -382,6 +383,9 @@ def feat26(w_subtype, indeks):
     print_procent(35, len(w_subtype),indeks)
     return w_subtype[indeks]
 
+def feat27(w_base, indeks):
+    return w_base[indeks]
+
 def prepare_dictionary(nkjp_dir, number_of_files):
 
     w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences, od, do = load_xmls(nkjp_dir, number_of_files)
@@ -428,6 +432,7 @@ def prepare_dictionary(nkjp_dir, number_of_files):
                 '24-9)': feat24(w_msd, indeks, 9),
                 # '25)': feat25(w_type, indeks),
                 # '26)': feat26(w_subtype, indeks)
+                '27)': feat27(w_base, indeks)
             }
     predictions = []
     for sent_i in range(number_of_sentences):
@@ -444,11 +449,6 @@ def prepare_dictionary(nkjp_dir, number_of_files):
             #     'Subtype': feat26(w_subtype, indeks)}
     print("przetwarzanie danych zostało zakończone")
 
-    # for feature in features:
-    #     for key, value in feature.items():
-    #         print(key, value)
-    #     print("")
-
     print("eksportowanie danych do pliku...")
     filepath = "./venv/Input_file/"
     filename = "input_data" + ".json"
@@ -459,9 +459,3 @@ def prepare_dictionary(nkjp_dir, number_of_files):
     with open(os.path.join(filepath, filename), 'w') as temp_file:
         json.dump(predictions, temp_file)
     print("dane zostały eksportowane do pliku")
-
-
-# nkjp_dir = "C:\\Users\Paweł\Documents\INL_korpus"
-# nkjp_dir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
-# number_of_files = 1 # nie więcej niż 3889
-# prepare_dictionary(nkjp_dir, number_of_files)
