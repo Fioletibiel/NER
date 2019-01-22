@@ -212,6 +212,7 @@ def load_xmls(nkjp_dir, number_of_files):
                 break
 
     print("zakończono przetwarzanie wstępne")
+    print("liczba tokenów wynosi: " + str(number_of_tokens) + ", zaś liczba dań: "+ str(number_of_sentences) + ", a liczba plików: " + str(number_of_files))
     return w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences, ann_words_indexes_from, ann_words_indexes_to
 
 # {'1)+1:w_tag': 'Fpa',
