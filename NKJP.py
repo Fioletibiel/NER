@@ -1,6 +1,7 @@
 import os
 # from xml.dom import minidom
 import xml.etree.ElementTree as ET
+import json
 
 # def remove_duplicates_1(list):
 #     list2 = []
@@ -240,6 +241,7 @@ def load_xmls(nkjp_dir, number_of_files):
                 BOS.append(False)
                 EOS.append(False)
 
+    print("dane zostały wczytane")
     return w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences
 
 # {'1)+1:w_tag': 'Fpa',
@@ -273,101 +275,136 @@ def load_xmls(nkjp_dir, number_of_files):
 #  '26)w_subtype':}
 
 def feat1(w_tag, indeks):
+    print("trwa przetwarzanie... 2%")
     if(indeks+1<len(w_tag)): return w_tag[indeks+1]
     else: return "0"
 
 def feat2(w_tag, indeks):
+    print("trwa przetwarzanie... 5%")
     if(indeks+1<len(w_tag)): return w_tag[indeks+1][0:2]
     else: return "0"
 
 def feat3(w_base, indeks):
+    print("trwa przetwarzanie... 8%")
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].istitle()
     else: return False
 
 def feat4(w_base, indeks):
+    print("trwa przetwarzanie... 11%")
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].isupper()
     else: return False
 
 def feat5(w_base, indeks):
+    print("trwa przetwarzanie... 14%")
     if(indeks+1<len(w_base)):
         return w_base[indeks+1].lower()
 
 def feat6(w_tag, indeks):
+    print("trwa przetwarzanie... 17%")
     if(indeks-1>=0): return w_tag[indeks-1]
     else: return "0"
 
 def feat7(w_tag, indeks):
+    print("trwa przetwarzanie... 20%")
     if(indeks-1>=0): return w_tag[indeks-1][0:2]
     else: return "0"
 
 def feat8(w_base, indeks):
+    print("trwa przetwarzanie... 22%")
     if(indeks-1>= 0):
         return w_base[indeks-1].istitle()
     else: return False
 
 def feat9(w_base, indeks):
+    print("trwa przetwarzanie... 25%")
     if(indeks-1>= 0):
         return w_base[indeks-1].isupper()
     else: return False
 
 def feat10(w_base, indeks):
+    print("trwa przetwarzanie... 28%")
     if(indeks-1>= 0):
         return w_base[indeks-1].lower()
     else: return False
 
 def feat11(BOS, indeks):
+    print("trwa przetwarzanie... 31%")
     return BOS[indeks]
 
 def feat12(EOS, indeks):
+    print("trwa przetwarzanie... 34%")
     return EOS[indeks]
 
 def feat13(w_tag, indeks):
+    print("trwa przetwarzanie... 37%")
     return w_tag[indeks]
 
 def feat14(w_tag, indeks):
+    print("trwa przetwarzanie... 40%")
     return w_tag[indeks][0:2]
 
 def feat15(w_base, indeks):
+    print("trwa przetwarzanie... 42%")
     return w_base[indeks].isdigit()
 
 def feat16(w_base, indeks):
+    print("trwa przetwarzanie... 45%")
     return w_base[indeks].istitle()
 
 def feat17(w_base, indeks):
+    print("trwa przetwarzanie... 48%")
     return w_base[indeks].isupper()
 
 def feat18(w_base, indeks):
+    print("trwa przetwarzanie... 51%")
     return w_base[indeks].lower()
 
 def feat19(w_orth, indeks):
+    print("trwa przetwarzanie... 54%")
     return w_orth[indeks].lower()
 
 def feat20(w_base, indeks):
+    print("trwa przetwarzanie... 57%")
     return w_base[indeks][-2:]
 
 def feat21(w_base, indeks):
+    print("trwa przetwarzanie... 60%")
     return w_base[indeks][-3:]
 
 def feat22(w_orth, indeks):
+    print("trwa przetwarzanie... 62%")
     return w_orth[indeks][-2:]
 
 def feat23(w_orth, indeks):
+    print("trwa przetwarzanie... 65%")
     return w_orth[indeks][-3:]
 
 def feat24(w_msd, indeks, zero_dziewiec):
+    if zero_dziewiec == 0: print("trwa przetwarzanie... 68%")
+    if zero_dziewiec == 1: print("trwa przetwarzanie... 71%")
+    if zero_dziewiec == 2: print("trwa przetwarzanie... 74%")
+    if zero_dziewiec == 3: print("trwa przetwarzanie... 77%")
+    if zero_dziewiec == 4: print("trwa przetwarzanie... 80%")
+    if zero_dziewiec == 5: print("trwa przetwarzanie... 82%")
+    if zero_dziewiec == 6: print("trwa przetwarzanie... 85%")
+    if zero_dziewiec == 7: print("trwa przetwarzanie... 88%")
+    if zero_dziewiec == 8: print("trwa przetwarzanie... 91%")
+    if zero_dziewiec == 9: print("trwa przetwarzanie... 94%")
     return w_msd[indeks][zero_dziewiec]
 
 def feat25(w_type, indeks):
+    print("trwa przetwarzanie... 97%")
     return w_type[indeks]
 
 def feat26(w_subtype, indeks):
+    print("trwa przetwarzanie... 100%")
     return w_subtype[indeks]
 
-def prepare_dictionary(nkjp_dir, path_of_input_file, number_of_files):
+def prepare_dictionary(nkjp_dir, number_of_files):
     w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences = load_xmls(nkjp_dir, number_of_files)
-
+    print("inicjowanie przetwarzania danych...")
     features = []
     for indeks in range(number_of_tokens):
         features.append(dict())
@@ -407,98 +444,23 @@ def prepare_dictionary(nkjp_dir, path_of_input_file, number_of_files):
             '24-9)': feat24(w_msd, indeks, 9),
             '25)w_type': feat25(w_type, indeks),
             '26)w_subtype': feat26(w_subtype, indeks)}
+    print("przetwarzanie danych zostało zakończone")
+    # for feature in features:
+    #     for key, value in feature.items():
+    #         print(key, value)
+    #     print("")
+    print("eksportowanie danych do pliku...")
+    filepath = "./venv/Input_file/"
+    filename = "input_data" + ".jar"
+    with open(os.path.join(filepath, filename), 'w') as temp_file:
+        json.dump(features, temp_file)
+    print("dane zostały eksportowane do pliku")
 
 
 
-    for feature in features:
-        for key, value in feature.items():
-            print(key, value)
-        print("")
 
-
-
-nkjp_dir = "C:\\Users\Paweł\Documents\INL_korpus"
-path_of_input_file =".input_data.txt"
+# nkjp_dir = "C:\\Users\Paweł\Documents\INL_korpus"
+nkjp_dir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
+path_of_input_file ="./Input_file/"
 number_of_files = 1
-prepare_dictionary(nkjp_dir, path_of_input_file, number_of_files)
-
-
-
-
-#
-# def preprocessing():
-#
-#     print("dane zostały wczytane")
-#     print("trwa preprocessing... 1/7")
-#     ner2 = []
-#     for elem in ner:        # zmienia formatowanie tablicy ner - usuwa wyświetlanie klucza 'value' i zostawia samą nazwę dopasowania ner
-#         for key, value in elem.items():
-#             ner2.append(value)
-#     ner = ner2
-#     print("trwa preprocessing... 2/7")
-#     objects2 = []
-#     ner3 = []
-#     for i in range(len(objects)-1):     # jeśli obiekty powtarzają się zaraz po sobie, to wywalenie tych bardziej ogólnie zinterpretowanych
-#         if(objects[i] != objects[i+1]):
-#             objects2.append(objects[i])  # jeśli chcemy mieć w słowniku formę morfologiczną to używamy objects2.append(tokens[i])
-#             ner3.append(ner[i])         # a jeśli formę podstawową, wówczas używamy objects2.append(objects[i])
-#     objects = objects2
-#     ner = ner3
-#     print("trwa preprocessing... 3/7")
-#     # objects, ner = remove_duplicates_2(objects, ner)      # usuwa duplikaty
-#     # objects_all = remove_duplicates_1(objects_all)        # warto sprawdzić czy algorytm lepiej uczy się na formach podstawowych
-#     # tokens_all = remove_duplicates_1(tokens_all)          # czy morfologicznych...
-#     print("trwa preprocessing... 4/7")
-#     ner4 = []
-#     objects3 = []
-#     for i in range(len(ner)):                       # usuwa ze słownika etykiety date i time oraz odpowiadające im obiekty
-#         if(ner[i] != "date" and ner[i] != "time"):
-#             ner4.append(ner[i])
-#             objects3.append(objects[i])
-#     ner = ner4
-#     objects = objects3
-#
-#     print("trwa preprocessing... 5/7")
-#     # Dalej trzeba stagować tekst tak, aby każdemu jego tokenowi dopasować wartość przypisaną w dictionary, a jeśli takiej nie ma, wówczas zero.
-#     # W ten sposób uzyskujemy dane wstępne do trenowania.
-#     tekst_ner = []
-#     bufor = 0
-#     count = 0
-#     buff = 0
-#     for token in objects_all:
-#         entity = False
-#         for i in range(len(objects)):
-#             if(token==objects[i]):
-#                 entity = True
-#                 bufor = i
-#         if(entity==True):
-#             tekst_ner.append(ner[bufor])
-#         else:
-#             tekst_ner.append("O")
-#         count +=1
-#
-#         buff = procent(count,len(objects_all), buff)
-#
-#
-#     print("trwa preprocessing... 6/7")
-#     tekst2 = []
-#     ner2 = []
-#     daneT = []
-#     nerT = []
-#     for i in range(len(objects_all)):
-#         if(i<int(0.9*len(objects_all))):
-#             tekst2.append(objects_all[i])
-#             ner2.append(tekst_ner[i])
-#         if(i>=int(0.9*len(objects_all))):
-#             daneT.append(objects_all[i])
-#             nerT.append(tekst_ner[i])
-#
-#     print("trwa preprocessing... 7/7")
-#     for i in range(len(tekst2)):
-#         tekst2[i] = tekst2[i].replace(' ', '-')
-#
-#     for i in range(len(daneT)):
-#         daneT[i] = daneT[i].replace(' ', '-')
-#
-#     print("preprocessing został zakończony")
-#     return tekst2, ner2, daneT, nerT
+prepare_dictionary(nkjp_dir, number_of_files)
