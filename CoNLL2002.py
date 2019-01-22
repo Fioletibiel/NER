@@ -1,23 +1,18 @@
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
-
 from itertools import chain
-
 import nltk
 import sklearn
 import scipy.stats
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RandomizedSearchCV
-
 import sklearn_crfsuite
 from sklearn_crfsuite import scorers
 from sklearn_crfsuite import metrics
 
-
 train_sents = list(nltk.corpus.conll2002.iob_sents('esp.train'))
 test_sents = list(nltk.corpus.conll2002.iob_sents('esp.testb'))
-
 
 def word2features(sent, i):
     word = sent[i][0]
@@ -61,16 +56,12 @@ def word2features(sent, i):
         features['EOS'] = True
 
     return features
-
 def sent2features(sent):
     return [word2features(sent, i) for i in range(len(sent))]
-
 def sent2labels(sent):
     return [label for token, postag, label in sent]
-
 def sent2tokens(sent):
     return [token for token, postag, label in sent]
-
 
 X_train = [sent2features(s) for s in train_sents]
 y_train = [sent2labels(s) for s in train_sents]
@@ -78,52 +69,36 @@ y_train = [sent2labels(s) for s in train_sents]
 X_test = [sent2features(s) for s in test_sents]
 y_test = [sent2labels(s) for s in test_sents]
 
-
-print("train_sents[0]:")
-(print(train_sents[0]))
-print("")
-
-print("sent2features(train_sents[0])")
-print(sent2features(train_sents[0]))
-print("")
-
-print("X_train = [sent2features(s) for s in train_sents]")
-print(X_train[:2])
-print("")
-print("y_train = [sent2labels(s) for s in train_sents]")
-print(y_train[:2])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# crf = sklearn_crfsuite.CRF(
-#     algorithm='lbfgs',
-#     c1=0.1,
-#     c2=0.1,
-#     max_iterations=100,
-#     all_possible_transitions=True
-# )
-# crf.fit(X_train, y_train)
+# print("train_sents[0]:")
+# (print(train_sents[0]))
+# print("")
 #
+# print("sent2features(train_sents[0])")
+# print(sent2features(train_sents[0]))
+# print("")
 #
-#
-# labels = list(crf.classes_)
-# labels.remove('O')
-# print(labels)
-#
-#
+# print("X_train = [sent2features(s) for s in train_sents]")
+# print(X_train[:2])
+# print("")
+# print("y_train = [sent2labels(s) for s in train_sents]")
+# print(y_train[:2])
+
+crf = sklearn_crfsuite.CRF(
+    algorithm='lbfgs',
+    c1=0.1,
+    c2=0.1,
+    max_iterations=100,
+    all_possible_transitions=True
+)
+crf.fit(X_train, y_train)
+
+
+labels = list(crf.classes_)
+labels.remove('O')
+print(labels)
+
+
+
 # y_pred = crf.predict(X_test)
 # metrics.flat_f1_score(y_test, y_pred,
 #                       average='weighted', labels=labels)

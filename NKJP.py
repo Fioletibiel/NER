@@ -168,10 +168,10 @@ def load_xmls(nkjp_dir, number_of_files):
                                                         ann_named_index += 1
 
                                                         if has_subtype != True:
-                                                            n_subtype.append("")
+                                                            n_subtype.append("O")
 
                                                         if has_type != True:
-                                                            n_type.append("")
+                                                            n_type.append("O")
 
                                         ann_named_indexes_to.append(ann_named_index)
                     # ann_named_indexes_to.append(ann_named_index)
@@ -195,7 +195,7 @@ def load_xmls(nkjp_dir, number_of_files):
     for i in range(len(w_msd)):
         for j in range(10):
             if(j >= len(w_msd[i])):
-                w_msd[i].append("")
+                w_msd[i].append("O")
 
     # for i in range(len(n_base))[:]:
     #     print(n_base[i] + " - " + n_type[i] + " - " + n_subtype[i])
@@ -211,7 +211,7 @@ def load_xmls(nkjp_dir, number_of_files):
             found = False
             n_buff = 0
             for n in range(n_od, n_do):
-                if w_base[w] == n_base[n] and w_orth[w] == n_orth[n] and n_subtype[n] != "":
+                if w_base[w] == n_base[n] and w_orth[w] == n_orth[n] and n_subtype[n] != "O":
                     n_buff = n
                     found = True
             if found:
@@ -224,10 +224,10 @@ def load_xmls(nkjp_dir, number_of_files):
                         found = True
                 if found:
                     w_type.append(n_type[n_buff])
-                    w_subtype.append("")
+                    w_subtype.append("O")
                 else:
-                    w_type.append("")
-                    w_subtype.append("")
+                    w_type.append("O")
+                    w_subtype.append("O")
 
     # for i in range(len(w_base))[:100]:
     #     print(w_orth[i] + " - " + w_type[i] + " - " + w_subtype[i])
@@ -289,15 +289,18 @@ def load_xmls(nkjp_dir, number_of_files):
 #  '25)w_type':
 #  '26)w_subtype':}
 
+# okazało się, że gdy token jest interpunkcją, to podpunkt 19 może wyglądać tak: "\"" przez co kompilator traktuje to jak "\ i "", gdzie drugie jako pustą wartość, trzeba to naprawić
+# trzeba zrobić dodatkowe warunki, że gdy token jest interpunkcją, to pewne ficzery będą przyjmować wartość "O", z uwzględnieniem sąsiednich tokenów
+
 def feat1(w_tag, indeks):
     print_procent(1,len(w_tag),indeks)
     if(indeks+1<len(w_tag)): return w_tag[indeks+1]
-    else: return "0"
+    else: return "O"
 
 def feat2(w_tag, indeks):
     print_procent(2, len(w_tag),indeks)
     if(indeks+1<len(w_tag)): return w_tag[indeks+1][0:2]
-    else: return "0"
+    else: return "O"
 
 def feat3(w_base, indeks):
     print_procent(3, len(w_base),indeks)
@@ -319,12 +322,12 @@ def feat5(w_base, indeks):
 def feat6(w_tag, indeks):
     print_procent(6, len(w_tag),indeks)
     if(indeks-1>=0): return w_tag[indeks-1]
-    else: return "0"
+    else: return "O"
 
 def feat7(w_tag, indeks):
     print_procent(7, len(w_tag),indeks)
     if(indeks-1>=0): return w_tag[indeks-1][0:2]
-    else: return "0"
+    else: return "O"
 
 def feat8(w_base, indeks):
     print_procent(8, len(w_base),indeks)
@@ -510,11 +513,16 @@ def prepare_dictionary(nkjp_dir, number_of_files):
     for sent_i in range(number_of_sentences):
         predictions.append(list())
         for indeks in range(od[sent_i], do[sent_i]):
-            # wyniki[sent_i].append(w_subtype)
-            predictions[sent_i].append(dict())
-            predictions[sent_i][indeks - od[sent_i]] = {
-                'Type': feat25(w_type, indeks),
-                'Subtype': feat26(w_subtype, indeks)}
+            predictions[sent_i].append(w_subtype[indeks])
+
+            # predictions[sent_i].append(w_type[indeks])
+            # predictions[sent_i].append(w_subtype[indeks])
+
+            # predictions[sent_i].append(dict())
+            # predictions[sent_i][indeks - od[sent_i]] = {
+            #     'Type': feat25(w_type, indeks),
+            #     'Subtype': feat26(w_subtype, indeks)}
+
 
     print("przetwarzanie danych zostało zakończone")
     # for feature in features:

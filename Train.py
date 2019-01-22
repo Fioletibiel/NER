@@ -1,29 +1,74 @@
 from sklearn.model_selection import train_test_split
 import os
 import json
-from io import StringIO
+import sklearn_crfsuite
+from sklearn_crfsuite import metrics
 
 def load_data():
     filepath = "./venv/Input_file/"
     filename = "input_data" + ".json"
     with open(os.path.join(filepath, filename), 'r') as temp_file:
-        data = json.load(temp_file)
-    # for elem in data:
+        features = json.load(temp_file)
+    # for elem in features:
     #     for key, value in elem.items():
     #         print(str(key) + " - " + str(value))
     #     print("")
-    return data
+    filepath = "./venv/Input_file/"
+    filename = "predictions" + ".json"
+    with open(os.path.join(filepath, filename), 'r') as temp_file:
+        predictions = json.load(temp_file)
+    # for elem in predictions:
+    #     for key, value in elem.items():
+    #         print(str(key) + " - " + str(value))
+    #     print("")
+    return features, predictions
+features, predictions = load_data()
 
-# data = load_data()
+mikser_danych = 0
+daneUR, daneT, nerUR, nerT = train_test_split(features, predictions, test_size=0.1, random_state=0)
+daneU, daneR, nerU, nerR = train_test_split(daneUR, nerUR, test_size=0.11, random_state=mikser_danych)
+
+for elem in daneU[0]:
+    print(elem)
+print(daneU[0])
+
+
+
+crf = sklearn_crfsuite.CRF(
+    algorithm='lbfgs',
+    c1=0.1,
+    c2=0.1,
+    max_iterations=100,
+    all_possible_transitions=True
+)
+crf.fit(daneU, nerU)
+
+
+
+labels = list(crf.classes_)
+labels.remove("")
+print(labels)
+
+
+print("")
+
+# y_pred = crf.predict(X_test)
+# metrics.flat_f1_score(y_test, y_pred,
+#                       average='weighted', labels=labels)
 #
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.11, random_state=mikser_danych)
 #
+# # group B and I results
+# sorted_labels = sorted(
+#     labels,
+#     key=lambda name: (name[1:], name[0])
+# )
+# print(metrics.flat_classification_report(
+#     y_test, y_pred, labels=sorted_labels, digits=3
+# ))
 
-
-
-
-
-
+print("")
+print("")
+print("")
 
 # def train(dane, ner, mikser_danych):
 #     daneU, daneR, nerU, nerR = train_test_split(dane, ner, test_size=0.11, random_state=mikser_danych)      # daneU i nerU to dane uczące, zaś daneR i nerR to dane rozwojowe
