@@ -3,24 +3,59 @@ import os
 import json
 import sklearn_crfsuite
 from sklearn_crfsuite import metrics
+import numpy as np
 
 def load_data():
+
     filepath = "./venv/Input_file/"
     filename = "input_data" + ".json"
     with open(os.path.join(filepath, filename), 'r') as temp_file:
         features = json.load(temp_file)
-    # for elem in features:
-    #     for key, value in elem.items():
-    #         print(str(key) + " - " + str(value))
-    #     print("")
-    filepath = "./venv/Input_file/"
     filename = "predictions" + ".json"
     with open(os.path.join(filepath, filename), 'r') as temp_file:
         predictions = json.load(temp_file)
-    # for elem in predictions:
-    #     for key, value in elem.items():
-    #         print(str(key) + " - " + str(value))
-    #     print("")
+        # predictions_binarized = json.load(temp_file)
+        # predictions_binarized = np.load(temp_file)
+    # filename = "factors" + ".json"
+    # with open(os.path.join(filepath, filename), 'r') as temp_file:
+    #     factors = json.load(temp_file)
+    # w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences, od, do = factors
+
+    # predictions_sentences = []
+    # for sent_i in range(number_of_sentences):
+    #     predictions_sentences.append(list())
+    #     for indeks in range(od[sent_i], do[sent_i]):
+    #         predictions_sentences[sent_i].append(predictions_binarized[indeks])
+    # #print(predictions_sentences)
+    # print("\n\n")
+    # predictions_binarized = predictions_sentences
+    # # for i in range(len(predictions_binarized)):
+    # #     for j in range(len(predictions_binarized[i])):
+    # #         predictions_binarized[i][j] = np.int32(predictions_binarized[i][j])
+    # # predictions_binarized_array = np.array([np.array(xi) for xi in predictions_binarized])
+    # # print(predictions_binarized_array)
+    # for sent_i in range(number_of_sentences):
+    #     for token_i in range(len(predictions_binarized[sent_i])):
+    #         predictions_binarized[sent_i][token_i] = np.int32(predictions_binarized[sent_i][token_i])
+    #
+    # lista = list()
+    # for sent_i in range(number_of_sentences):
+    #     lista.append(np.array([np.array(xi) for xi in predictions_binarized]))
+    # # predictions_binarized_array = np.array([np.array(xi) for xi in predictions_binarized])
+    # # print(predictions_binarized_array)
+    # lista = np.array(lista)
+    # print(type(lista))
+    # print(type(lista[0]))
+    # print(type(lista[0][0]))
+    # print(type(lista[0][0][0]))
+    # print(type(lista[0][0][0][0]))
+    #
+    # # predictions = np.array()
+    # # for sent_i in range(number_of_sentences):
+    # #     np.append()
+    # #     for indeks in range(od[sent_i], do[sent_i]):
+    # #         predictions[sent_i].append(dict())
+    # #         predictions[sent_i][indeks-od[sent_i]] = {}
 
     daneUR, daneT, nerUR, nerT = train_test_split(features, predictions, test_size=0.1, random_state=0)
     daneU, daneR, nerU, nerR = train_test_split(daneUR, nerUR, test_size=0.11, random_state=0)
@@ -60,6 +95,7 @@ def train(daneU, nerU, daneR, nerR, algorytm):
             algorithm=algorytm,
             max_iterations=100,
             all_possible_transitions=True)
+
 
     crf.fit(daneU, nerU)
     labels = list(crf.classes_)
