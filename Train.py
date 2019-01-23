@@ -4,6 +4,10 @@ import json
 import sklearn_crfsuite
 from sklearn_crfsuite import metrics
 
+import scipy.stats
+from sklearn.model_selection  import RandomizedSearchCV
+from sklearn.metrics import make_scorer
+
 def load_data():
 
     filepath = "./venv/Input_file/"
@@ -79,6 +83,53 @@ def procent(gora,dol,buff):
         print('{0}%\r'.format(percent)),
     return percent
 
+def hyperparameter_optimization(X_train, y_train):
+    crf = sklearn_crfsuite.CRF(
+        algorithm='lbfgs',
+        max_iterations=100,
+        all_possible_transitions=True
+    )
+    params_space = {'c1': scipy.stats.expon(scale=0.5), 'c2': scipy.stats.expon(scale=0.05)}
+
+    f1_scorer = make_scorer(metrics.flat_f1_score, average='weighted', )
+
+    rs = RandomizedSearchCV(crf, params_space,
+                            cv=3,
+                            verbose=1,
+                            n_jobs=-1,
+                            n_iter=50,
+                            scoring=f1_scorer)
+    rs.fit(X_train, y_train)
+
+    # print('best params:', rs.best_params_)
+    # print('best CV score:', rs.best_score_)
+    # print('model size: {:0.2f}M'.format(rs.best_estimator_.size_ / 1000000))
+
+    # for key, value in rs.best_params_.item():
+    print("best params: ")
+    print(len(rs.best_params_))
+    print(type(rs.best_params_))
+    print(rs.best_params_)
+    # best params:
+    # 2
+    # <class 'dict'>
+    # {'c1': 0.0016129636757673464, 'c2': 0.005536036011289631}
+
+    # [Parallel(n_jobs=-1)]: Done 34 tasks | elapsed: 58.1s
+    # [Parallel(n_jobs=-1)]: Done 150 out of 150 | elapsed: 4.1min finished
+    # Traceback(most recent call last):
+    # File "C:/Users/p.kaminski4/PycharmProjects/NER/Main.py", line 16, in < module >
+    # best params:
+    # 2
+    # <class 'dict'>
+    # {'c1': 0.0016129636757673464, 'c2': 0.005536036011289631}
+    # indeks_najlepszego_algorytmu = train.f1_max(daneU, nerU, daneR, nerR, algorytmy)
+    # File "C:\Users\p.kaminski4\PycharmProjects\NER\Train.py", line 167, in f1_max
+    # f1, _, _, _, _ = train(daneU, nerU, daneR, nerR, algorytm[indeks])
+    # File "C:\Users\p.kaminski4\PycharmProjects\NER\Train.py", line 123, in train
+    # ce1, ce2 = hyperparameter_optimization(daneU, nerU)
+    # TypeError: 'NoneType' object is not iterable
+
 def train(daneU, nerU, daneR, nerR, algorytm):
 
     # algorytmy:
@@ -88,11 +139,12 @@ def train(daneU, nerU, daneR, nerR, algorytm):
     # 'pa' - Passive Aggressive (PA)
     # 'arow' - Adaptive Regularization Of Weight Vector (AROW)
     if algorytm == "lbfgs":
+        ce1, ce2 = hyperparameter_optimization(daneU, nerU)
         crf = sklearn_crfsuite.CRF(
             algorithm=algorytm,
-            c1=0.1,
-            c2=0.1,
-            max_iterations=1000,
+            c1=0.1,     # 0.1,
+            c2=0.1,     # 0.1,
+            max_iterations=100,
             all_possible_transitions=True)
     elif algorytm == "l2sgd":
         crf = sklearn_crfsuite.CRF(
@@ -105,7 +157,6 @@ def train(daneU, nerU, daneR, nerR, algorytm):
             algorithm=algorytm,
             max_iterations=100,
             all_possible_transitions=True)
-
 
     crf.fit(daneU, nerU)
     labels = list(crf.classes_)
