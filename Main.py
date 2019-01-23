@@ -1,5 +1,7 @@
 import NKJP as nkjp
 import Train as train
+import sklearn_crfsuite
+from sklearn_crfsuite import metrics
 
 wczytywanie_danych = False
 if wczytywanie_danych:
@@ -13,17 +15,22 @@ if not wczytywanie_danych:
     algorytmy = ["lbfgs", "l2sgd", "ap", "pa", "arow"]
     indeks_najlepszego_algorytmu = train.f1_max(daneU, nerU, daneR, nerR, algorytmy)
 
-    print("\n\nWYNIKI:")
+    print("\n\n\n\n------------------------------------------------------------------------------------------------------------------\nWYNIKI:")
     f1, precision, recall, labels, y_pred = train.train(daneU, nerU, daneT, nerT, algorytmy[indeks_najlepszego_algorytmu])
-    print("\nEntities:", end=" ")
-    for elem in labels: print(elem, end=", ")
-    print("\nMiara F1: " + str(round(f1, 2)) + "\nPrecyzja: " + str(round(precision, 2)) + "\nPełność: " + str(round(recall, 2)) + "\n")
+    # print("\nLabels in training data:", end=" ")
+    # for elem in labels: print(elem, end=", ")
+    # print("\nMiara F1: " + str(round(f1, 2)) + "\nPrecyzja: " + str(round(precision, 2)) + "\nPełność: " + str(round(recall, 2)) + "\n")
+    # sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
+    # print(train.metrics.flat_classification_report(nerT, y_pred, labels=sorted_labels, digits=3))
 
-    sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
-    print(train.metrics.flat_classification_report(nerT, y_pred, labels=sorted_labels, digits=3))
-
-
-    print("\nTeraz dane zostaną wyświetlone wg klucza: token - nkjp - sklearn\n")
+    dane_uczace = []
+    for sent in daneU:
+        for token in sent:
+            dane_uczace.append(token)
+    dane_rozwojowe = []
+    for sent in nerR:
+        for token in sent:
+            dane_rozwojowe.append(token)
     tokens = []
     for sent in daneT:
         for token in sent:
@@ -38,11 +45,17 @@ if not wczytywanie_danych:
         for token in sent:
                 eskalern.append(token)
 
-    # print("\nDane, dla których sklearn przypisało jakąś wartość:\n")
-    # for i in range(len(tokens)):
-    #     if eskalern[i] != 'O':
-    #         print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]))
+    print("\n\nIlość tokenów uczących: " + str(len(dane_uczace)))
+    print("Ilość tokenów rozwojowych: " + str(len(nkjp_korpus)))
+    print("Ilość tokenów testowych: " +str(len(eskalern)))
+    labelsR = set(dane_rozwojowe)
+    labelsT = set(nkjp_korpus)
+    labelsZ = set(eskalern)
+    print("\nLabels rozwojowe: " + str(labelsR))
+    print("Labels testowe: " + str(labelsT))
+    print("Labels rozpoznane: " + str(labelsZ))
 
+    print("\nDane zostaną wyświetlone wg klucza: token - nkjp - sklearn")
     licz = 0
     for i in range(len(tokens)):
         if eskalern[i] == nkjp_korpus[i] and eskalern[i] != "O": licz += 1

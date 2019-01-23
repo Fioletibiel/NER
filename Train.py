@@ -3,7 +3,6 @@ import os
 import json
 import sklearn_crfsuite
 from sklearn_crfsuite import metrics
-import numpy as np
 
 def load_data():
 
@@ -93,7 +92,7 @@ def train(daneU, nerU, daneR, nerR, algorytm):
             algorithm=algorytm,
             c1=0.1,
             c2=0.1,
-            max_iterations=100,
+            max_iterations=1000,
             all_possible_transitions=True)
     elif algorytm == "l2sgd":
         crf = sklearn_crfsuite.CRF(
@@ -118,6 +117,13 @@ def train(daneU, nerU, daneR, nerR, algorytm):
     recall = metrics.flat_recall_score(nerR, y_pred, average='weighted', labels=labels)
     # sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
     # print(metrics.flat_classification_report(nerR, y_pred, labels=sorted_labels, digits=3))
+    print("\n\nAlgorytm: " + str(algorytm))
+    print("\nTraining labels:", end=" ")
+    for elem in labels: print(elem, end=", ")
+    print("\nPrecyzja: " + str(round(precision, 2)) + "\nPełność: " + str(round(recall, 2)) + "\nMiara F1: " + str(round(f1, 2)) + "\n")
+    sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
+    print(metrics.flat_classification_report(nerR, y_pred, labels=sorted_labels, digits=3))
+    print("---------------------------------------------------------")
     return f1, precision, recall, labels, y_pred
 
 def f1_max(daneU, nerU, daneR, nerR, algorytm):
