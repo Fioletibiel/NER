@@ -122,7 +122,7 @@ def train(daneU, nerU, daneR, nerR, algorytm):
         # ce1, ce2 = hyperparameter_optimization(daneU, nerU)
         ce1 = 0.1
         ce2 = 0.1
-        print("Współczynniki c1 i c2: " + str(ce1) + ", " + str(ce2))
+        # print("Współczynniki c1 i c2: " + str(ce1) + ", " + str(ce2))
         crf = sklearn_crfsuite.CRF(
             algorithm=algorytm,
             c1=ce1,     # 0.1,

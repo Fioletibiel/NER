@@ -5,7 +5,7 @@ wczytywanie_danych = False
 if wczytywanie_danych:
     # nkjp_dir = "C:\\Users\p.kaminski4\Desktop\INL_korpus_10_samples"
     nkjp_dir = "C:\\Users\Paweł\Documents\INL_korpus"
-    number_of_files = 10      # nie więcej niż 3889
+    number_of_files = 2000      # nie więcej niż 3889
     nkjp.prepare_dictionary(nkjp_dir, number_of_files)
 if not wczytywanie_danych:
     daneU, nerU, daneR, nerR, daneT, nerT = train.load_data()
@@ -54,18 +54,17 @@ if not wczytywanie_danych:
     print("Labels rozpoznane: " + str(labelsZ))
 
     print("\nDane zostaną wyświetlone wg klucza: token - nkjp - sklearn")
-    licz = 0
+    good = 0
     for i in range(len(tokens)):
-        if eskalern[i] == nkjp_korpus[i] and eskalern[i] != "O": licz += 1
-    print("\nDane, dla których sklearn przypisało poprawną wartość: " + str(licz) + "\n")
+        if eskalern[i] == nkjp_korpus[i] and eskalern[i] != "O": good += 1
+    bad = 0
+    for i in range(len(tokens)):
+        if eskalern[i] != nkjp_korpus[i]: bad += 1
+    print("\nDane, dla których sklearn przypisało poprawną wartość: " + str(good) + "/" + str(good+bad) + "\n")
     for i in range(len(tokens)):
         if eskalern[i] == nkjp_korpus[i] and eskalern[i] != "O":
             print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]))
-
-    licz = 0
-    for i in range(len(tokens)):
-        if eskalern[i] != nkjp_korpus[i]: licz += 1
-    print("\nDane, dla których sklearn przypisało błędną wartość: " + str(licz) + "\n")
+    print("\nDane, dla których sklearn przypisało błędną wartość: " + str(bad) + str(good+bad) + "\n")
     for i in range(len(tokens)):
         if eskalern[i] != nkjp_korpus[i]:
             print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]))
