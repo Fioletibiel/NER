@@ -533,4 +533,4 @@ def prepare_dictionary(nkjp_dir, number_of_files):
     # with open(os.path.join(filepath, filename), 'w') as temp_file:
     #     json.dump(factors, temp_file)
 
-print("dane zostały eksportowane do pliku")
+    print("dane zostały eksportowane do pliku")
