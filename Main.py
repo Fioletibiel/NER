@@ -13,12 +13,15 @@ if not wczytywanie_danych:
     algorytmy = ["lbfgs", "l2sgd", "ap", "pa", "arow"]
     indeks_najlepszego_algorytmu = train.f1_max(daneU, nerU, daneR, nerR, algorytmy)
 
+    print("\n\nWYNIKI:")
     f1, precision, recall, labels, y_pred = train.train(daneU, nerU, daneT, nerT, algorytmy[indeks_najlepszego_algorytmu])
-    print("\nEntities:", end="")
+    print("\nEntities:", end=" ")
     for elem in labels: print(elem, end=", ")
     print("\nMiara F1: " + str(round(f1, 2)) + "\nPrecyzja: " + str(round(precision, 2)) + "\nPełność: " + str(round(recall, 2)) + "\n")
+
     sorted_labels = sorted(labels, key=lambda name: (name[1:], name[0]))
     print(train.metrics.flat_classification_report(nerT, y_pred, labels=sorted_labels, digits=3))
+
 
     print("\nTeraz dane zostaną wyświetlone wg klucza: token - nkjp - sklearn\n")
     tokens = []
@@ -40,12 +43,18 @@ if not wczytywanie_danych:
     #     if eskalern[i] != 'O':
     #         print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]))
 
-    print("\nDane, dla których sklearn przypisało poprawną wartość:\n")
+    licz = 0
+    for i in range(len(tokens)):
+        if eskalern[i] == nkjp_korpus[i] and eskalern[i] != "O": licz += 1
+    print("\nDane, dla których sklearn przypisało poprawną wartość: " + str(licz) + "\n")
     for i in range(len(tokens)):
         if eskalern[i] == nkjp_korpus[i] and eskalern[i] != "O":
             print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]))
 
-    print("\nDane, dla których sklearn przypisało błędną wartość:\n")
+    licz = 0
+    for i in range(len(tokens)):
+        if eskalern[i] != nkjp_korpus[i]: licz += 1
+    print("\nDane, dla których sklearn przypisało błędną wartość: " + str(licz) + "\n")
     for i in range(len(tokens)):
         if eskalern[i] != nkjp_korpus[i]:
             print(str(tokens[i]) + " - " + str(nkjp_korpus[i]) + " - " + str(eskalern[i]))

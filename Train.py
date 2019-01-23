@@ -57,8 +57,19 @@ def load_data():
     # #         predictions[sent_i].append(dict())
     # #         predictions[sent_i][indeks-od[sent_i]] = {}
 
-    daneUR, daneT, nerUR, nerT = train_test_split(features, predictions, test_size=0.1, random_state=0)
-    daneU, daneR, nerU, nerR = train_test_split(daneUR, nerUR, test_size=0.11, random_state=0)
+    # daneUR, daneT, nerUR, nerT = train_test_split(features, predictions, test_size=0.1, random_state=0)
+    # daneU, daneR, nerU, nerR = train_test_split(daneUR, nerUR, test_size=0.11, random_state=0)
+    daneU, daneRT, nerU, nerRT = train_test_split(features, predictions, test_size=0.2, random_state=0)
+    daneR, daneT, nerR, nerT = train_test_split(daneRT, nerRT, test_size=0.5, random_state=0)
+    # print(len(daneU))
+    # print(len(nerU))
+    # print("")
+    # print(len(daneR))
+    # print(len(nerR))
+    # print("")
+    # print(len(daneT))
+    # print(len(nerT))
+    # print("")
 
     return daneU, nerU, daneR, nerR, daneT, nerT
 
