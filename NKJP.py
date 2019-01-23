@@ -1,6 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
 import json
+# from sklearn.preprocessing import MultiLabelBinarizer
+# import numpy as np
 
 def procent(gora,dol,buff):
     global buff_percent
@@ -391,6 +393,7 @@ def prepare_dictionary(nkjp_dir, number_of_files):
     w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences, od, do = load_xmls(nkjp_dir, number_of_files)
 
     print("inicjowanie przetwarzania danych...")
+
     features = []
     for sent_i in range(number_of_sentences):
         features.append(list())
@@ -432,30 +435,102 @@ def prepare_dictionary(nkjp_dir, number_of_files):
                 '24-9)': feat24(w_msd, indeks, 9),
                 # '25)': feat25(w_type, indeks),
                 # '26)': feat26(w_subtype, indeks)
-                '27)': feat27(w_base, indeks)
-            }
+                '27)': feat27(w_base, indeks)}
+
+    # features = []
+    # for indeks in range(number_of_tokens):
+    #     features.append(dict())
+    #     features[indeks] = {
+    #         '1)': feat1(w_tag, indeks),
+    #         '2)': feat2(w_tag, indeks),
+    #         '3)': feat3(w_base, indeks),
+    #         '4)': feat4(w_base, indeks),
+    #         '5)': feat5(w_base, w_tag, indeks),
+    #         '6)': feat6(w_tag, indeks),
+    #         '7)': feat7(w_tag, indeks),
+    #         '8)': feat8(w_base, indeks),
+    #         '9)': feat9(w_base, indeks),
+    #         '10)': feat10(w_base, w_tag, indeks),
+    #         '11)': feat11(BOS, indeks),
+    #         '12)': feat12(EOS, indeks),
+    #         '13)': feat13(w_tag, indeks),
+    #         '14)': feat14(w_tag, indeks),
+    #         '15)': feat15(w_base, indeks),
+    #         '16)': feat16(w_base, indeks),
+    #         '17)': feat17(w_base, indeks),
+    #         '18)': feat18(w_base, w_tag, indeks),
+    #         '19)': feat19(w_orth, w_base, w_tag, indeks),
+    #         '20)': feat20(w_base, w_tag, indeks),
+    #         '21)': feat21(w_base, w_tag, indeks),
+    #         '22)': feat22(w_orth, w_base, w_tag, indeks),
+    #         '23)': feat23(w_orth, w_base, w_tag, indeks),
+    #         '24-0)': feat24(w_msd, indeks, 0),
+    #         '24-1)': feat24(w_msd, indeks, 1),
+    #         '24-2)': feat24(w_msd, indeks, 2),
+    #         '24-3)': feat24(w_msd, indeks, 3),
+    #         '24-4)': feat24(w_msd, indeks, 4),
+    #         '24-5)': feat24(w_msd, indeks, 5),
+    #         '24-6)': feat24(w_msd, indeks, 6),
+    #         '24-7)': feat24(w_msd, indeks, 7),
+    #         '24-8)': feat24(w_msd, indeks, 8),
+    #         '24-9)': feat24(w_msd, indeks, 9),
+    #         '27)': feat27(w_base, indeks)}
+
     predictions = []
     for sent_i in range(number_of_sentences):
         predictions.append(list())
         for indeks in range(od[sent_i], do[sent_i]):
-            predictions[sent_i].append(w_subtype[indeks])
+            if w_subtype == "O": predictions[sent_i].append(w_type[indeks])       # 1 metoda
+            else: predictions[sent_i].append(w_subtype[indeks])
+            # predictions[sent_i].append(list())                                  # 2 metoda
+            # predictions[sent_i][indeks - od[sent_i]].append(w_type[indeks])
+            # predictions[sent_i][indeks - od[sent_i]].append(w_subtype[indeks])
+            # predictions[sent_i].append(tuple())                                 # 3 metoda
+            # predictions[sent_i] += w_type[indeks]
+            # predictions[sent_i] += w_subtype[indeks]
 
-            # predictions[sent_i].append(w_type[indeks])
-            # predictions[sent_i].append(w_subtype[indeks])
+    # predictions = []
+    # for token_i in range(number_of_tokens):
+    #     predictions.append(list())
+    #     predictions[token_i].append(w_type[token_i])
+    #     predictions[token_i].append(w_subtype[token_i])
 
-            # predictions[sent_i].append(dict())
-            # predictions[sent_i][indeks - od[sent_i]] = {
-            #     'Type': feat25(w_type, indeks),
-            #     'Subtype': feat26(w_subtype, indeks)}
-    print("przetwarzanie danych zostało zakończone")
+    # mlb = MultiLabelBinarizer()
+    # predictions_binarized_array = mlb.fit_transform(predictions)
+    # print("\nLabels: " + str(mlb.classes_) + "\n")
+    #
+    # predictions_binarized_list = list(predictions_binarized_array)
+    # predictions_binarized = list()
+    # for elem in predictions_binarized_list:
+    #     predictions_binarized.append(list(elem))
+    # for i in range(len(predictions_binarized)):
+    #     for j in range(len(predictions_binarized[i])):
+    #         predictions_binarized[i][j] = predictions_binarized[i][j].item()
+    # # print(predictions_binarized)
+
+    print("\nprzetwarzanie danych zostało zakończone")
+
+    # print(type(predictions_binarized))
+    # print(type(predictions_binarized[0]))
+    # print(type(predictions_binarized[0][0]))
+    # print(type(predictions_binarized_array))
+    # print(type(predictions_binarized_array[0]))
+    # print(type(predictions_binarized_array[0][0]))
 
     print("eksportowanie danych do pliku...")
+
     filepath = "./venv/Input_file/"
     filename = "input_data" + ".json"
     with open(os.path.join(filepath, filename), 'w') as temp_file:
         json.dump(features, temp_file)
-    filepath = "./venv/Input_file/"
     filename = "predictions" + ".json"
     with open(os.path.join(filepath, filename), 'w') as temp_file:
         json.dump(predictions, temp_file)
-    print("dane zostały eksportowane do pliku")
+        #json.dump(predictions_binarized, temp_file)
+        # np.save(temp_file, predictions_binarized)
+    # filename = "factors" + ".json"
+    # factors = [w_orth, w_base, w_tag, w_msd, w_type, w_subtype, BOS, EOS, number_of_tokens, number_of_sentences, od, do]
+    # with open(os.path.join(filepath, filename), 'w') as temp_file:
+    #     json.dump(factors, temp_file)
+
+print("dane zostały eksportowane do pliku")
